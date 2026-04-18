@@ -1,6 +1,7 @@
 # SideNote
 
-웹 서핑 중 잠깐 기록하는 포스트잇 메모 앱.
+웹 서핑 중 잠깐 기록을 위한 공간입니다.
+https://nzamfig.github.io/sidenote/
 
 ## 주요 기능
 

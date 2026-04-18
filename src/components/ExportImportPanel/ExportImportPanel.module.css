@@ -1,0 +1,47 @@
+/* CanvasSizePanel의 trigger 버튼과 동일한 스타일 기준으로 맞춘다 */
+.panel {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 100%;
+  padding: 0 10px 0 9px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.35);
+  transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  color: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.label {
+  font-size: 11.5px;
+  color: rgba(0, 0, 0, 0.55);
+  letter-spacing: 0.01em;
+  transition: color 0.15s;
+}
+
+.btn:hover .label {
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>메모 앱 — 시퀀스 다이어그램</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --accent: #6366f1;
+      --accent-light: #eef2ff;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.05);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      padding: 48px 24px 80px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 56px;
+    }
+
+    nav a {
+      display: inline-block;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      background: var(--surface);
+      transition: all .15s;
+    }
+
+    nav a:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .toc-index {
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 10px;
+      padding: 1px 7px;
+      margin-right: 4px;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--accent-light);
+    }
+
+    .card-number {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .card-body {
+      padding: 28px;
+      overflow-x: auto;
+    }
+
+    .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* 전체 요약 카드 */
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .summary-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--border);
+      background: #f0fdf4;
+    }
+
+    .summary-header .icon {
+      font-size: 20px;
+    }
+
+    .summary-header .card-title { color: #166534; }
+
+    .flow-box {
+      margin: 28px;
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 24px 28px;
+      font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.9;
+      overflow-x: auto;
+    }
+
+    .flow-box .comment { color: #64748b; }
+    .flow-box .arrow   { color: #818cf8; }
+    .flow-box .label   { color: #34d399; }
+    .flow-box .note    { color: #fbbf24; }
+
+    footer {
+      text-align: center;
+      margin-top: 64px;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>메모 앱 — 시퀀스 다이어그램</h1>
+  <p>주요 사용자 인터랙션별 내부 처리 흐름</p>
+</header>
+
+<nav>
+  <a href="#s1"><span class="toc-index">1</span>앱 시작 · 복원</a>
+  <a href="#s2"><span class="toc-index">2</span>메모 생성</a>
+  <a href="#s3"><span class="toc-index">3</span>드래그 이동</a>
+  <a href="#s4"><span class="toc-index">4</span>내용 편집</a>
+  <a href="#s5"><span class="toc-index">5</span>색상 변경 · 삭제</a>
+  <a href="#s6"><span class="toc-index">6</span>이미지 삽입 · 리사이즈</a>
+  <a href="#s7"><span class="toc-index">7</span>지도 삽입 · 마커</a>
+  <a href="#s8"><span class="toc-index">8</span>메모 리사이즈</a>
+  <a href="#s9"><span class="toc-index">↓</span>전체 흐름 요약</a>
+</nav>
+
+<main>
+
+  <!-- 1. 앱 시작 -->
+  <section class="card" id="s1">
+    <div class="card-header">
+      <div class="card-number">1</div>
+      <div>
+        <div class="card-title">앱 시작 — localStorage 복원 (Hydration)</div>
+        <div class="card-desc">페이지 로드 시 저장된 메모를 스토어에 주입하고 자동 저장 감시를 시작한다</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="mermaid">
+sequenceDiagram
+    participant Browser as 브라우저
+    participant App
+    participant usePersistence as usePersistence 훅
+    participant LS as localStorage 유틸
+    participant Store as Zustand 스토어
+    participant Canvas
+
+    Browser->>App: 페이지 로드
+    App->>usePersistence: usePersistence() 호출
+    App->>Canvas: &lt;Canvas /&gt; 렌더링 (memos: [])
+
+    Note over usePersistence: useEffect 마운트 실행
+
+    usePersistence->>LS: loadMemos()
+    LS->>LS: getItem('memo-app-v1')
+
+    alt 저장된 데이터 있음
+        LS->>LS: JSON.parse() + migrate()
+        LS-->>usePersistence: Memo[]
+        usePersistence->>Store: hydrateFromStorage(memos)
+        Store-->>Canvas: memos 업데이트 → 리렌더
+    else 최초 실행 (데이터 없음)
+        LS-->>usePersistence: []
+        Note over usePersistence: 아무것도 하지 않음
+    end
+
+    usePersistence->>Store: subscribe() 등록 (자동 저장 감시 시작)
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. 메모 생성 -->
+  <section class="card" id="s2">
+    <div class="card-header">
+      <div class="card-number">2</div>
+      <div>
+        <div class="card-title">메모 생성 — 캔버스 더블클릭</div>
+        <div class="card-desc">클릭 좌표를 캔버스 기준으로 변환해 새 메모를 생성하고 즉시 저장한다</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="mermaid">
+sequenceDiagram
+    actor User as 사용자
+    participant Canvas
+    participant Interaction as useCanvasInteraction 훅
+    participant Store as Zustand 스토어
+    participant LS as localStorage 유틸
+    participant Memo
+
+    User->>Canvas: 캔버스 배경 더블클릭
+    Canvas->>Interaction: handleDoubleClick(e)
+    Interaction->>Interaction: closest('[data-memo-id]') 확인
+    Note over Interaction: 기존 메모 위가 아니면 계속 진행
+
+    Interaction->>Interaction: getBoundingClientRect()로<br/>캔버스 기준 좌표 계산<br/>x = clientX - rect.left<br/>y = clientY - rect.top
+
+    Interaction->>Store: createMemo({ position: {x, y} })
+    Store->>Store: generateId()로 id 생성
+    Store->>Store: memos 배열 맨 끝에 새 Memo 추가
+    Store->>Store: activeMemoId = 새 메모 id
+
+    Store-->>Canvas: memos 변경 → 리렌더
+    Canvas->>Memo: &lt;Memo memo={newMemo} zIndex={N} /&gt;
+    Memo->>Memo: isNew = true → autoFocus 전달
+    Note over Memo: textarea에 자동 포커스<br/>바로 타이핑 가능
+
+    Store-->>LS: subscribe 콜백 → saveMemos()
+    LS->>LS: setItem('memo-app-v1', JSON)
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 드래그 이동 -->
+  <section class="card" id="s3">
+    <div class="card-header">
+      <div class="card-number">3</div>
+      <div>
+        <div class="card-title">메모 드래그 이동</div>
+        <div class="card-desc">드래그 중에는 CSS transform만 변경하고, 드래그 종료 시점에만 스토어에 위치를 커밋한다</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="mermaid">
+sequenceDiagram
+    actor User as 사용자
+    participant Toolbar as MemoToolbar (드래그 핸들)
+    participant DndKit as @dnd-kit/core
+    participant Memo
+    participant Canvas
+    participant Store as Zustand 스토어
+    participant LS as localStorage 유틸
+
+    User->>Toolbar: 포인터 누름 (pointerdown)
+    Toolbar->>Memo: onPointerDown 실행
+    Memo->>Store: reorderToTop(id)
+    Store->>Store: 해당 메모를 배열 맨 끝으로 이동<br/>→ z-index 최상위
+    Memo->>Store: setActiveMemo(id)
+
+    Toolbar->>DndKit: listeners.onPointerDown 전달
+    DndKit->>DndKit: PointerSensor: 5px 이상 이동 대기
+
+    User->>Toolbar: 포인터 5px 이상 이동
+    DndKit->>DndKit: 드래그 시작 (isDragging = true)
+    DndKit-->>Memo: transform = {x: dx, y: dy} 전달
+
+    loop 포인터 이동 중 (매 프레임)
+        User->>Toolbar: 포인터 이동
+        DndKit-->>Memo: transform 업데이트
+        Memo->>Memo: style.transform = translate(dx, dy)<br/>left/top은 변경 없음
+        Note over Memo: GPU transform으로 렌더링<br/>스토어·localStorage 쓰기 없음
+    end
+
+    User->>Toolbar: 포인터 놓음 (pointerup)
+    DndKit->>Canvas: onDragEnd({ active, delta })
+    Canvas->>Canvas: rawX = position.x + delta.x<br/>rawY = position.y + delta.y
+    Canvas->>Canvas: 경계 클램핑<br/>x = clamp(rawX, 0, canvasW - memoW)<br/>y = clamp(rawY, 0, canvasH - memoH)
+    Canvas->>Store: moveMemo(id, { x, y })
+    Store->>Store: position 업데이트, updatedAt 갱신
+    Store-->>Memo: transform = null → left/top으로 확정
+    Store-->>LS: subscribe 콜백 → saveMemos()
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 내용 편집 -->
+  <section class="card" id="s4">
+    <div class="card-header">
+      <div class="card-number">4</div>
+      <div>
+        <div class="card-title">메모 내용 편집</div>
+        <div class="card-desc">입력 중에는 React·스토어가 관여하지 않고, 포커스를 잃는 순간(onBlur)에만 저장한다</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="mermaid">
+sequenceDiagram
+    actor User as 사용자
+    participant MemoContent
+    participant Store as Zustand 스토어
+    participant LS as localStorage 유틸
+
+    Note over MemoContent: textarea는 비제어 컴포넌트<br/>(defaultValue 사용, React가 값 추적 안 함)
+
+    User->>MemoContent: textarea 클릭 (포커스 획득)
+    MemoContent->>MemoContent: onPointerDown → stopPropagation()<br/>드래그 핸들로 이벤트 전파 차단
+
+    loop 텍스트 입력 중
+        User->>MemoContent: 키 입력
+        Note over MemoContent: DOM이 값을 직접 관리<br/>리렌더 발생하지 않음
+    end
+
+    User->>MemoContent: 다른 영역 클릭 (onBlur)
+    MemoContent->>MemoContent: e.target.value !== content 비교
+
+    alt 내용이 변경됐을 때
+        MemoContent->>Store: onChange(newValue)<br/>→ updateMemo(id, { content })
+        Store->>Store: content 업데이트, updatedAt 갱신
+        Store-->>LS: subscribe 콜백 → saveMemos()
+    else 내용이 변경되지 않았을 때
+        Note over MemoContent: 스토어·localStorage 쓰기 생략
+    end
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 색상 변경 · 삭제 -->
+  <section class="card" id="s5">
+    <div class="card-header">
+      <div class="card-number">5</div>
+      <div>
+        <div class="card-title">색상 변경 및 메모 삭제</div>
+        <div class="card-desc">툴바의 두 가지 액션. 모두 스토어를 통해 처리되고 localStorage에 즉시 반영된다</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="mermaid">
+sequenceDiagram
+    actor User as 사용자
+    participant Toolbar as MemoToolbar
+    participant ColorPicker
+    participant Actions as useMemoActions 훅
+    participant Store as Zustand 스토어
+    participant LS as localStorage 유틸
+
+    rect rgb(237, 246, 255)
+        Note over User, LS: 색상 변경 흐름
+        User->>Toolbar: 색상 스와치 클릭
+        Toolbar->>ColorPicker: onChange(color) 전달
+        ColorPicker->>Actions: onColorChange(color)
+        Actions->>Store: updateMemo(id, { color })
+        Store->>Store: color 업데이트, updatedAt 갱신
+        Store-->>Toolbar: 리렌더 → 새 색상 반영
+        Store-->>LS: subscribe 콜백 → saveMemos()
+    end
+
+    rect rgb(255, 241, 241)
+        Note over User, LS: 삭제 흐름
+        User->>Toolbar: 삭제 버튼 (✕) 클릭
+        Toolbar->>Actions: onDelete()
+        Actions->>Store: deleteMemo(id)
+        Store->>Store: memos에서 해당 id 제거
+        alt 삭제된 메모가 활성화 상태였을 때
+            Store->>Store: activeMemoId = null
+        end
+        Store-->>Canvas: memos 변경 → Memo 컴포넌트 언마운트
+        Store-->>LS: subscribe 콜백 → saveMemos()
+    end
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. 이미지 삽입 · 리사이즈 -->
+  <section class="card" id="s6">
+    <div class="card-header">
+      <div class="card-number">6</div>
+      <div>
+        <div class="card-title">이미지 삽입 및 리사이즈</div>
+        <div class="card-desc">로컬 이미지를 커서 위치에 삽입하고, 호버 시 정렬·리사이즈 핸들을 제공한다</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="mermaid">
+sequenceDiagram
+    actor User as 사용자
+    participant Memo
+    participant FileInput as &lt;input type="file"&gt;
+    participant MemoContent
+    participant Store as Zustand 스토어
+
+    rect rgb(237, 246, 255)
+        Note over User, Store: 이미지 삽입 흐름
+        User->>Memo: 하단 이미지 버튼 클릭
+        Memo->>FileInput: fileInputRef.click()
+        User->>FileInput: 로컬 이미지 파일 선택
+        FileInput->>Memo: onChange(file)
+        Memo->>Memo: FileReader.readAsDataURL(file)
+        Note over Memo: maxWidth = memo.width - 16<br/>maxHeight = memo.height - 44
+        Memo->>MemoContent: insertImage(src, maxWidth, maxHeight)
+        MemoContent->>MemoContent: &lt;img&gt; 생성 후 커서 위치에 삽입
+        MemoContent->>Store: onChange(div.innerHTML)
+    end
+
+    rect rgb(240, 255, 244)
+        Note over User, Store: 이미지 정렬 · 리사이즈 흐름
+        User->>MemoContent: 이미지 호버
+        MemoContent->>MemoContent: showImgToolbar(img)<br/>→ 정렬 툴바 + 리사이즈 핸들 표시
+        User->>MemoContent: 정렬 버튼 클릭
+        MemoContent->>MemoContent: applyAlignment() → img.style.margin 변경
+        MemoContent->>Store: onChange(div.innerHTML)
+        User->>MemoContent: 우측 하단 투명 핸들 드래그
+        MemoContent->>MemoContent: document mousemove → img width/height 갱신<br/>핸들 위치 DOM 직접 갱신 (리렌더 없음)
+        MemoContent->>Store: mouseup → onChange(div.innerHTML)
+    end
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. 지도 삽입 · 마커 -->
+  <section class="card" id="s7">
+    <div class="card-header">
+      <div class="card-number">7</div>
+      <div>
+        <div class="card-title">지도 삽입 및 마커 관리</div>
+        <div class="card-desc">Leaflet 지도를 메모 본문에 삽입하고, 마커 추가·삭제 모드를 제공한다</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="mermaid">
+sequenceDiagram
+    actor User as 사용자
+    participant Memo
+    participant MemoContent
+    participant Leaflet as Leaflet (initLeafletMap)
+    participant Store as Zustand 스토어
+
+    rect rgb(237, 246, 255)
+        Note over User, Store: 지도 삽입 흐름
+        User->>Memo: 하단 지도 버튼 클릭
+        Memo->>MemoContent: insertMap()
+        MemoContent->>MemoContent: wrapper(data-map-wrapper) + container(data-map) 생성
+        MemoContent->>MemoContent: 커서 위치에 wrapper 삽입
+        MemoContent->>Leaflet: requestAnimationFrame → initLeafletMap(container)
+        Leaflet->>Leaflet: L.map() + OpenStreetMap 타일 레이어
+        Leaflet->>Leaflet: wrapper 하단에 액션 바(마커 추가/삭제 버튼) 생성
+        MemoContent->>Store: onChange(getCleanedHTML) ← Leaflet DOM 제거 후 직렬화
+    end
+
+    rect rgb(240, 255, 244)
+        Note over User, Store: 마커 추가 흐름
+        User->>Leaflet: 마커 추가 버튼 클릭
+        Leaflet->>Leaflet: 입력 폼 표시 (위도/경도)
+        User->>Leaflet: 위도·경도 입력 후 추가
+        Leaflet->>Leaflet: L.marker([lat, lng]).addTo(map)
+        Leaflet->>Leaflet: container.dataset.markers 갱신 (JSON)
+        Leaflet->>Store: onSave() → onChange(getCleanedHTML)
+    end
+
+    rect rgb(255, 241, 241)
+        Note over User, Store: 마커 삭제 모드 흐름
+        User->>Leaflet: 마커 삭제 버튼 클릭 (토글 ON)
+        Leaflet->>Leaflet: 모든 마커 → deletableIcon(빨간 ✕ 원형)으로 교체
+        User->>Leaflet: 특정 마커(✕ 아이콘) 클릭
+        Leaflet->>Leaflet: marker.remove() + markerList splice
+        Leaflet->>Store: onSave()
+        User->>Leaflet: 삭제 버튼 재클릭 (토글 OFF)
+        Leaflet->>Leaflet: 모든 마커 → defaultIcon으로 원복
+    end
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. 메모 리사이즈 -->
+  <section class="card" id="s8">
+    <div class="card-header">
+      <div class="card-number">8</div>
+      <div>
+        <div class="card-title">메모 리사이즈</div>
+        <div class="card-desc">우측 하단 핸들 드래그로 메모 크기를 조절하고 저장한다</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="mermaid">
+sequenceDiagram
+    actor User as 사용자
+    participant Handle as 리사이즈 핸들
+    participant useResizable as useResizable 훅
+    participant Store as Zustand 스토어
+    participant LS as localStorage 유틸
+
+    User->>Handle: pointerdown (드래그 시작)
+    Handle->>useResizable: handlePointerDown(e)
+    useResizable->>useResizable: startX, startY, startW, startH 기록
+    useResizable->>useResizable: pointermove 리스너 등록
+
+    loop 포인터 이동 중
+        User->>Handle: 포인터 이동
+        useResizable->>useResizable: newW = max(160, startW + dx)<br/>newH = max(120, startH + dy)
+        useResizable->>Store: resizeMemo(id, { width, height })
+        Store->>Store: size 업데이트, updatedAt 갱신
+        Note over Store: 매 이동마다 스토어 업데이트<br/>(이미지 max 크기 재계산을 위해)
+    end
+
+    User->>Handle: pointerup (드래그 종료)
+    useResizable->>useResizable: pointermove 리스너 해제
+    Store-->>LS: subscribe 콜백 → saveMemos()
+      </div>
+    </div>
+  </section>
+
+  <!-- 전체 흐름 요약 -->
+  <section class="summary-card" id="s9">
+    <div class="summary-header">
+      <span class="icon">🗺</span>
+      <div>
+        <div class="card-title">전체 데이터 흐름 요약</div>
+        <div class="card-desc" style="color: #166534;">모든 인터랙션은 동일한 단방향 파이프라인을 따른다</div>
+      </div>
+    </div>
+    <div class="flow-box">
+<span class="comment">// ① 사용자 인터랙션 (이벤트 발생)</span>
+<span class="label">사용자 인터랙션</span>
+  더블클릭(메모 생성) · 드래그(이동) · 타이핑(편집) · 버튼 클릭(색상·삭제)
+        <span class="arrow">│</span>
+        <span class="arrow">▼</span>
+<span class="comment">// ② 컴포넌트 이벤트 핸들러 (DOM 이벤트 수신)</span>
+<span class="label">컴포넌트</span>  Canvas · Memo · MemoContent · MemoToolbar · ColorPicker
+        <span class="arrow">│</span>
+        <span class="arrow">▼</span>
+<span class="comment">// ③ 커스텀 훅 (UI 로직 ↔ 비즈니스 로직 분리 경계)</span>
+<span class="label">커스텀 훅</span> useCanvasInteraction · useMemoActions · usePersistence
+        <span class="arrow">│</span>
+        <span class="arrow">▼</span>
+<span class="comment">// ④ 스토어 액션 (단일 진실 소스)</span>
+<span class="label">Zustand 스토어</span>
+  createMemo · moveMemo · updateMemo · deleteMemo
+  reorderToTop · setActiveMemo · hydrateFromStorage
+        <span class="arrow">│</span>
+        <span class="arrow">├──────────────────────────────────────────────┐</span>
+        <span class="arrow">▼</span>                                              <span class="arrow">▼</span>
+<span class="comment">// ⑤-A 구독 컴포넌트 리렌더            // ⑤-B localStorage 자동 저장</span>
+<span class="label">React 리렌더</span>                             <span class="label">subscribe 콜백</span>
+  memos 배열을 구독하는                      React 렌더 사이클 <span class="note">바깥</span>에서 실행
+  컴포넌트만 선택적으로 리렌더               → saveMemos() → setItem()
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  memo app · 시퀀스 다이어그램 · Mermaid 10
+</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    sequence: {
+      diagramMarginX: 24,
+      diagramMarginY: 16,
+      actorMargin: 60,
+      width: 160,
+      height: 50,
+      boxMargin: 10,
+      boxTextMargin: 5,
+      noteMargin: 10,
+      messageMargin: 40,
+      mirrorActors: false,
+      useMaxWidth: true,
+    },
+    themeVariables: {
+      primaryColor: '#eef2ff',
+      primaryTextColor: '#1e293b',
+      primaryBorderColor: '#6366f1',
+      lineColor: '#94a3b8',
+      secondaryColor: '#f1f5f9',
+      tertiaryColor: '#f0fdf4',
+      noteBkgColor: '#fefce8',
+      noteTextColor: '#1e293b',
+      noteBorderColor: '#facc15',
+      activationBkgColor: '#e0e7ff',
+      activationBorderColor: '#6366f1',
+    }
+  });
+</script>
+</body>
+</html>

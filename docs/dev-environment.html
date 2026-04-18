@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>메모 앱 — 개발 환경 가이드</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --accent: #6366f1;
+      --accent-light: #eef2ff;
+      --accent-dark: #4f46e5;
+      --green: #16a34a;
+      --green-light: #f0fdf4;
+      --green-border: #bbf7d0;
+      --yellow: #ca8a04;
+      --yellow-light: #fefce8;
+      --yellow-border: #fde68a;
+      --red: #dc2626;
+      --red-light: #fef2f2;
+      --red-border: #fecaca;
+      --shadow: 0 1px 3px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.04);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .layout { display: flex; min-height: 100vh; }
+
+    aside {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 32px 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 0 20px 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+
+    .sidebar-logo h2 { font-size: 15px; font-weight: 700; color: var(--accent); }
+    .sidebar-logo p  { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .sidebar-section {
+      padding: 8px 20px 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    aside a {
+      display: block;
+      padding: 6px 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: all .12s;
+    }
+
+    aside a:hover {
+      color: var(--accent);
+      background: var(--accent-light);
+      border-left-color: var(--accent);
+    }
+
+    main {
+      flex: 1;
+      padding: 48px 56px 96px;
+      max-width: 860px;
+    }
+
+    h1 { font-size: 26px; font-weight: 800; letter-spacing: -.5px; margin-bottom: 8px; }
+    h2 { font-size: 19px; font-weight: 700; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+    h3 { font-size: 15px; font-weight: 700; margin: 24px 0 10px; color: var(--accent-dark); }
+    p  { margin-bottom: 12px; color: #334155; }
+
+    .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
+    .divider  { height: 1px; background: var(--border); margin: 8px 0 24px; }
+
+    /* 코드 블록 */
+    .code-block {
+      background: #0f172a;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .code-block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+    }
+
+    .code-block-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #94a3b8;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .code-block pre {
+      padding: 16px 20px;
+      font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #e2e8f0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .code-block .comment { color: #64748b; }
+    .code-block .cmd     { color: #34d399; }
+    .code-block .str     { color: #fbbf24; }
+    .code-block .key     { color: #93c5fd; }
+    .code-block .val     { color: #f9a8d4; }
+
+    /* 인라인 코드 */
+    code {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: 'Fira Code', monospace;
+      color: var(--accent-dark);
+    }
+
+    /* 테이블 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    th {
+      background: var(--bg);
+      text-align: left;
+      padding: 9px 12px;
+      font-weight: 600;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-muted);
+      font-size: 11px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    td code { font-size: 11px; }
+
+    /* 배지 */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-green  { background: var(--green-light);  color: var(--green);  border: 1px solid var(--green-border); }
+    .badge-red    { background: var(--red-light);    color: var(--red);    border: 1px solid var(--red-border);   }
+    .badge-yellow { background: var(--yellow-light); color: var(--yellow); border: 1px solid var(--yellow-border); }
+    .badge-blue   { background: var(--accent-light); color: var(--accent-dark); }
+
+    /* 콜아웃 */
+    .callout {
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      border-left: 4px solid;
+    }
+
+    .callout-blue   { background: var(--accent-light); border-color: var(--accent); }
+    .callout-green  { background: var(--green-light);  border-color: var(--green);  }
+    .callout-yellow { background: var(--yellow-light); border-color: var(--yellow); }
+    .callout-red    { background: var(--red-light);    border-color: var(--red);    }
+
+    .callout p      { margin: 0; font-size: 13px; }
+    .callout strong { display: block; margin-bottom: 4px; }
+
+    /* 카드 */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .stat-card .stat-val { font-size: 22px; font-weight: 800; color: var(--accent); }
+    .stat-card .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    /* 스텝 */
+    .steps { counter-reset: step; }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .step-number {
+      counter-increment: step;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step-content h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .step-content p  { font-size: 13px; color: var(--text-muted); margin: 0; }
+
+    /* 단축키 */
+    kbd {
+      display: inline-block;
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      border-bottom-width: 2px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-family: monospace;
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 1px 2px rgba(0,0,0,.08);
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- 사이드바 -->
+  <aside>
+    <div class="sidebar-logo">
+      <h2>🛠 개발 환경 가이드</h2>
+      <p>메모 앱 v0.0.0</p>
+    </div>
+    <div class="sidebar-section">환경 정보</div>
+    <a href="#env-overview">환경 개요</a>
+    <a href="#versions">버전 정보</a>
+    <a href="#dependencies">의존성 목록</a>
+    <div class="sidebar-section">시작하기</div>
+    <a href="#setup">프로젝트 설정</a>
+    <a href="#commands">명령어 참고표</a>
+    <a href="#dev-workflow">개발 워크플로</a>
+    <div class="sidebar-section">구성 파일</div>
+    <a href="#vite-config">Vite 설정</a>
+    <a href="#ts-config">TypeScript 설정</a>
+    <a href="#test-config">테스트 설정</a>
+    <div class="sidebar-section">디버깅</div>
+    <a href="#debug">디버깅 팁</a>
+    <a href="#known-issues">알려진 제약</a>
+    <div class="sidebar-section">참고 문서</div>
+    <a href="overview.html">📋 기획 문서</a>
+    <a href="sequence-diagrams.html">🗺 시퀀스 다이어그램</a>
+  </aside>
+
+  <!-- 본문 -->
+  <main>
+    <h1>개발 환경 가이드</h1>
+    <p class="subtitle">메모 앱 로컬 개발 환경 설정 및 워크플로 참고 문서</p>
+    <div class="divider"></div>
+
+    <!-- 환경 개요 -->
+    <h2 id="env-overview">환경 개요</h2>
+    <div class="card-grid">
+      <div class="stat-card">
+        <div class="stat-val">v20.3.0</div>
+        <div class="stat-label">Node.js</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">9.8.1</div>
+        <div class="stat-label">npm</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">React 18</div>
+        <div class="stat-label">UI 프레임워크</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">Vite 5</div>
+        <div class="stat-label">빌드 도구</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">TypeScript</div>
+        <div class="stat-label">언어 (strict)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">darwin</div>
+        <div class="stat-label">플랫폼</div>
+      </div>
+    </div>
+
+    <div class="callout callout-yellow">
+      <p><strong>⚠️ Node.js 버전 제약</strong>
+      현재 환경의 Node.js v20.3.0은 일부 최신 패키지의 권장 버전(<code>^20.9.0</code> 이상)보다 낮다.
+      이로 인해 <strong>vitest</strong>는 <code>v1.x</code>를, <strong>jsdom</strong>은 <code>v24.x</code>를 사용한다.
+      Node를 v20.12.0 이상으로 업그레이드하면 최신 버전을 사용할 수 있다.</p>
+    </div>
+
+    <!-- 버전 정보 -->
+    <h2 id="versions">버전 정보</h2>
+    <table>
+      <thead>
+        <tr><th>패키지</th><th>설치 버전</th><th>권장 범위</th><th>비고</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Node.js</td><td><code>v20.3.0</code></td><td><code>≥ 18.0.0</code></td><td><span class="badge badge-yellow">버전 낮음</span> 동작은 정상</td></tr>
+        <tr><td>npm</td><td><code>9.8.1</code></td><td><code>≥ 9.0.0</code></td><td><span class="badge badge-green">정상</span></td></tr>
+        <tr><td>React</td><td><code>^18.3.1</code></td><td><code>18.x</code></td><td><span class="badge badge-green">정상</span></td></tr>
+        <tr><td>Vite</td><td><code>^5.4.10</code></td><td><code>5.x</code></td><td><span class="badge badge-green">정상</span></td></tr>
+        <tr><td>TypeScript</td><td><code>~5.6.2</code></td><td><code>5.x</code></td><td><span class="badge badge-green">정상</span></td></tr>
+        <tr><td>Zustand</td><td><code>^5.0.12</code></td><td><code>5.x</code></td><td><span class="badge badge-green">정상</span> v5 subscribe API 주의</td></tr>
+        <tr><td>@dnd-kit/core</td><td><code>^6.3.1</code></td><td><code>6.x</code></td><td><span class="badge badge-green">정상</span></td></tr>
+        <tr><td>vitest</td><td><code>^1.6.1</code></td><td>원래 <code>4.x</code></td><td><span class="badge badge-yellow">다운그레이드</span> Node 버전 제약</td></tr>
+        <tr><td>jsdom</td><td><code>^24.1.3</code></td><td>원래 <code>29.x</code></td><td><span class="badge badge-yellow">다운그레이드</span> Node 버전 제약</td></tr>
+      </tbody>
+    </table>
+
+    <!-- 의존성 목록 -->
+    <h2 id="dependencies">의존성 목록</h2>
+
+    <h3>프로덕션 의존성 (dependencies)</h3>
+    <table>
+      <thead><tr><th>패키지</th><th>버전</th><th>용도</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>react</code></td>
+          <td><code>^18.3.1</code></td>
+          <td>UI 프레임워크 핵심 라이브러리</td>
+        </tr>
+        <tr>
+          <td><code>react-dom</code></td>
+          <td><code>^18.3.1</code></td>
+          <td>React를 DOM에 렌더링하는 패키지</td>
+        </tr>
+        <tr>
+          <td><code>zustand</code></td>
+          <td><code>^5.0.12</code></td>
+          <td>전역 상태 관리. 스토어 + subscribe API로 자동 저장 구현</td>
+        </tr>
+        <tr>
+          <td><code>@dnd-kit/core</code></td>
+          <td><code>^6.3.1</code></td>
+          <td>드래그&드롭 핵심 라이브러리. useDraggable, DndContext, PointerSensor 사용</td>
+        </tr>
+        <tr>
+          <td><code>@dnd-kit/utilities</code></td>
+          <td><code>^3.2.2</code></td>
+          <td>CSS.Translate.toString() 유틸 (transform → CSS 문자열 변환)</td>
+        </tr>
+        <tr>
+          <td><code>leaflet</code></td>
+          <td><code>^1.9.4</code></td>
+          <td>인터랙티브 지도 라이브러리. OpenStreetMap 타일, 마커, 줌 컨트롤 제공</td>
+        </tr>
+        <tr>
+          <td><code>@types/leaflet</code></td>
+          <td><code>^1.9.21</code></td>
+          <td>Leaflet TypeScript 타입 정의 (프로덕션 의존성으로 포함)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>개발 의존성 (devDependencies)</h3>
+    <table>
+      <thead><tr><th>패키지</th><th>버전</th><th>용도</th></tr></thead>
+      <tbody>
+        <tr><td><code>vite</code></td><td><code>^5.4.10</code></td><td>번들러 · 개발 서버 (HMR)</td></tr>
+        <tr><td><code>@vitejs/plugin-react</code></td><td><code>^4.3.3</code></td><td>Vite에서 React JSX 변환 지원</td></tr>
+        <tr><td><code>typescript</code></td><td><code>~5.6.2</code></td><td>TypeScript 컴파일러</td></tr>
+        <tr><td><code>@types/react</code></td><td><code>^18.3.12</code></td><td>React TypeScript 타입 정의</td></tr>
+        <tr><td><code>@types/react-dom</code></td><td><code>^18.3.1</code></td><td>ReactDOM TypeScript 타입 정의</td></tr>
+        <tr><td><code>vitest</code></td><td><code>^1.6.1</code></td><td>테스트 러너 (Vite 설정 공유)</td></tr>
+        <tr><td><code>@testing-library/react</code></td><td><code>^16.3.2</code></td><td>React 컴포넌트 테스트 유틸</td></tr>
+        <tr><td><code>@testing-library/jest-dom</code></td><td><code>^6.9.1</code></td><td>DOM 관련 커스텀 matcher (toBeInTheDocument 등)</td></tr>
+        <tr><td><code>@testing-library/user-event</code></td><td><code>^14.6.1</code></td><td>사용자 인터랙션 시뮬레이션</td></tr>
+        <tr><td><code>jsdom</code></td><td><code>^24.1.3</code></td><td>브라우저 DOM 환경 에뮬레이션 (테스트 환경)</td></tr>
+        <tr><td><code>eslint</code></td><td><code>^9.13.0</code></td><td>코드 품질 린터</td></tr>
+        <tr><td><code>typescript-eslint</code></td><td><code>^8.11.0</code></td><td>TypeScript용 ESLint 규칙</td></tr>
+        <tr><td><code>eslint-plugin-react-hooks</code></td><td><code>^5.0.0</code></td><td>React Hooks 규칙 검사</td></tr>
+        <tr><td><code>eslint-plugin-react-refresh</code></td><td><code>^0.4.14</code></td><td>Vite HMR과 React 호환성 검사</td></tr>
+        <tr><td><code>globals</code></td><td><code>^15.11.0</code></td><td>ESLint 전역 변수 목록</td></tr>
+      </tbody>
+    </table>
+
+    <!-- 프로젝트 설정 -->
+    <h2 id="setup">프로젝트 설정</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h4>저장소 디렉토리로 이동</h4>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-label">Terminal</span></div>
+            <pre><span class="cmd">cd</span> ~/Documents/Projects/vscode/memo</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h4>의존성 설치</h4>
+          <p>node_modules가 없을 때만 실행한다. 이미 설치되어 있으면 건너뛴다.</p>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-label">Terminal</span></div>
+            <pre><span class="cmd">npm install</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h4>개발 서버 시작</h4>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-label">Terminal</span></div>
+            <pre><span class="cmd">npm run dev</span>
+
+<span class="comment">  VITE v5.4.21  ready in ~100ms
+  ➜  Local:   http://localhost:5173/</span></pre>
+          </div>
+          <p>브라우저에서 <code>http://localhost:5173</code>을 열면 앱이 실행된다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 명령어 참고표 -->
+    <h2 id="commands">명령어 참고표</h2>
+    <table>
+      <thead><tr><th>명령어</th><th>설명</th><th>출력 위치</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>npm run dev</code></td>
+          <td>개발 서버 시작. 파일 저장 시 HMR(Hot Module Replacement) 자동 적용</td>
+          <td><code>http://localhost:5173</code></td>
+        </tr>
+        <tr>
+          <td><code>npm run build</code></td>
+          <td>TypeScript 타입 검사 후 프로덕션 번들 생성 (<code>tsc -b &amp;&amp; vite build</code>)</td>
+          <td><code>dist/</code></td>
+        </tr>
+        <tr>
+          <td><code>npm run preview</code></td>
+          <td>빌드 결과물(<code>dist/</code>)을 로컬 서버로 미리 보기</td>
+          <td><code>http://localhost:4173</code></td>
+        </tr>
+        <tr>
+          <td><code>npm test</code></td>
+          <td>단위 테스트 1회 실행 후 종료 (<code>vitest run</code>)</td>
+          <td>터미널 출력</td>
+        </tr>
+        <tr>
+          <td><code>npm run test:watch</code></td>
+          <td>파일 변경 감지 후 테스트 자동 재실행 (<code>vitest</code>)</td>
+          <td>터미널 출력</td>
+        </tr>
+        <tr>
+          <td><code>npm run lint</code></td>
+          <td>ESLint로 코드 품질 검사</td>
+          <td>터미널 출력</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>빌드 결과물 크기</h3>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-block-label">vite build 출력</span></div>
+      <pre><span class="str">dist/index.html</span>                   <span class="comment">0.46 kB │ gzip:   0.30 kB</span>
+<span class="str">dist/assets/index-*.css</span>   <span class="comment">21.30 kB │ gzip:   7.92 kB</span>
+<span class="str">dist/assets/index-*.js</span>   <span class="comment">351.18 kB │ gzip: 108.84 kB</span></pre>
+    </div>
+    <div class="callout callout-yellow">
+      <p><strong>번들 크기 증가 원인</strong>
+      Leaflet 라이브러리와 CSS(지도 타일·마커·줌 컨트롤 스타일) 추가로 CSS가 약 8배, JS가 약 1.9배 증가했다.
+      지도 기능이 필요 없는 경우 dynamic import로 분리하면 초기 로드 크기를 줄일 수 있다.</p>
+    </div>
+
+    <!-- 개발 워크플로 -->
+    <h2 id="dev-workflow">개발 워크플로</h2>
+
+    <h3>새 기능 추가 순서</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h4>타입 정의</h4>
+          <p><code>src/types/memo.ts</code>에서 Memo 인터페이스 수정 또는 새 타입 추가.<br/>
+          필드가 추가되면 <code>CURRENT_VERSION</code>을 올리고 <code>migrate()</code>에 변환 로직 추가.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h4>스토어 액션 추가</h4>
+          <p><code>src/store/useMemoStore.ts</code>의 <code>MemoState</code> 인터페이스와 구현부에 새 액션 추가.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h4>훅 작성 (필요 시)</h4>
+          <p>UI 로직이 복잡하면 <code>src/hooks/</code>에 커스텀 훅으로 분리. 단순하면 컴포넌트에 직접 작성.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <h4>컴포넌트 구현</h4>
+          <p>기존 컴포넌트 수정 또는 <code>src/components/</code>에 새 폴더 추가 (<code>ComponentName.tsx</code> + <code>ComponentName.module.css</code>).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">5</div>
+        <div class="step-content">
+          <h4>테스트 작성</h4>
+          <p><code>src/test/</code>에 테스트 파일 추가 후 <code>npm test</code>로 검증.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>테스트 현황</h3>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-block-label">npm test 결과</span></div>
+      <pre><span class="comment"> RUN  v1.6.1</span>
+
+<span class="cmd"> ✓</span> src/test/localStorage.test.ts   <span class="comment">(6 tests)</span>
+<span class="cmd"> ✓</span> src/test/useMemoStore.test.ts   <span class="comment">(9 tests)</span>
+
+<span class="key"> Test Files</span>  <span class="cmd">2 passed</span> (2)
+<span class="key">      Tests</span>  <span class="cmd">15 passed</span> (15)</pre>
+    </div>
+
+    <table>
+      <thead><tr><th>테스트 파일</th><th>테스트 수</th><th>커버 영역</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>useMemoStore.test.ts</code></td>
+          <td>9개</td>
+          <td>createMemo, deleteMemo, moveMemo, reorderToTop, hydrateFromStorage</td>
+        </tr>
+        <tr>
+          <td><code>localStorage.test.ts</code></td>
+          <td>6개</td>
+          <td>loadMemos (정상·손상·배열 오류), saveMemos (정상·빈 배열)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Vite 설정 -->
+    <h2 id="vite-config">Vite 설정 (<code>vite.config.ts</code>)</h2>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-block-label">vite.config.ts</span></div>
+      <pre><span class="comment">/// &lt;reference types="vitest" /&gt;</span>  <span class="comment">// Vitest 타입 통합</span>
+<span class="key">import</span> { defineConfig } <span class="key">from</span> <span class="str">'vite'</span>;
+<span class="key">import</span> react <span class="key">from</span> <span class="str">'@vitejs/plugin-react'</span>;
+
+<span class="key">export default</span> defineConfig({
+  plugins: [react()],
+  test: {
+    environment: <span class="str">'jsdom'</span>,   <span class="comment">// 브라우저 DOM 환경 에뮬레이션</span>
+    globals: <span class="val">true</span>,          <span class="comment">// describe, it, expect 전역 사용</span>
+    setupFiles: [<span class="str">'./src/test/setup.ts'</span>],  <span class="comment">// jest-dom matcher 등록</span>
+  },
+});</pre>
+    </div>
+
+    <!-- TypeScript 설정 -->
+    <h2 id="ts-config">TypeScript 설정</h2>
+    <table>
+      <thead><tr><th>설정</th><th>값</th><th>의미</th></tr></thead>
+      <tbody>
+        <tr><td><code>target</code></td><td><code>ES2020</code></td><td>컴파일 대상 JS 버전. optional chaining, nullish coalescing 등 사용 가능</td></tr>
+        <tr><td><code>lib</code></td><td><code>ES2020, DOM, DOM.Iterable</code></td><td>브라우저 API(localStorage, crypto 등) 타입 포함</td></tr>
+        <tr><td><code>moduleResolution</code></td><td><code>Bundler</code></td><td>Vite/번들러 환경에 최적화된 모듈 해석 방식</td></tr>
+        <tr><td><code>strict</code></td><td><code>true</code></td><td>strictNullChecks, noImplicitAny 등 엄격 검사 활성화</td></tr>
+        <tr><td><code>noUnusedLocals</code></td><td><code>true</code></td><td>사용하지 않는 변수 컴파일 오류</td></tr>
+        <tr><td><code>noUnusedParameters</code></td><td><code>true</code></td><td>사용하지 않는 함수 파라미터 컴파일 오류</td></tr>
+        <tr><td><code>jsx</code></td><td><code>react-jsx</code></td><td>React 17+ 자동 JSX 변환 (import React 불필요)</td></tr>
+        <tr><td><code>noEmit</code></td><td><code>true</code></td><td>타입 검사만 수행, JS 파일 출력은 Vite가 담당</td></tr>
+      </tbody>
+    </table>
+
+    <!-- 테스트 설정 -->
+    <h2 id="test-config">테스트 설정</h2>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-block-label">src/test/setup.ts</span></div>
+      <pre><span class="key">import</span> <span class="str">'@testing-library/jest-dom'</span>;
+<span class="comment">// toBeInTheDocument(), toHaveTextContent() 등 DOM matcher 전역 등록</span></pre>
+    </div>
+
+    <div class="callout callout-blue">
+      <p><strong>테스트 환경 구성 방식</strong>
+      Vitest는 <code>vite.config.ts</code>의 <code>test.environment: 'jsdom'</code> 설정으로 브라우저 DOM을 에뮬레이션한다.
+      <code>test.globals: true</code>로 <code>describe</code>, <code>it</code>, <code>expect</code> 등을 import 없이 전역으로 사용한다.
+      localStorage는 jsdom이 자동으로 제공하므로 별도 모킹이 필요 없다.</p>
+    </div>
+
+    <!-- 디버깅 -->
+    <h2 id="debug">디버깅 팁</h2>
+
+    <h3>Zustand 스토어 상태 확인</h3>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-block-label">브라우저 개발자 도구 콘솔</span></div>
+      <pre><span class="comment">// 현재 스토어 상태 전체 출력</span>
+window.__ZUSTAND_DEVTOOLS__  <span class="comment">// Redux DevTools 연동 시</span>
+
+<span class="comment">// 또는 콘솔에서 직접 접근 (모듈 export 활용)</span>
+<span class="comment">// Vite 개발 환경에서 ESM 동적 import 사용</span>
+<span class="key">const</span> { useMemoStore } = <span class="key">await import</span>(<span class="str">'/src/store/useMemoStore.ts'</span>);
+console.log(useMemoStore.getState().memos);</pre>
+    </div>
+
+    <h3>localStorage 데이터 확인 및 초기화</h3>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-block-label">브라우저 개발자 도구 콘솔</span></div>
+      <pre><span class="comment">// 저장된 데이터 확인</span>
+JSON.parse(localStorage.getItem(<span class="str">'memo-app-v1'</span>))
+
+<span class="comment">// 전체 초기화 (새로 시작하고 싶을 때)</span>
+localStorage.removeItem(<span class="str">'memo-app-v1'</span>)
+location.reload()</pre>
+    </div>
+
+    <h3>드래그 동작 디버깅</h3>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-block-label">Canvas.tsx에 임시 로그 추가</span></div>
+      <pre><span class="key">const</span> handleDragEnd = (event: DragEndEvent) => {
+  <span class="comment">// 드래그 델타와 최종 위치 확인</span>
+  console.log(<span class="str">'delta'</span>, event.delta);
+  console.log(<span class="str">'final position'</span>, { x, y });
+  moveMemo(String(active.id), { x, y });
+};</pre>
+    </div>
+
+    <h3>VS Code 추천 확장</h3>
+    <table>
+      <thead><tr><th>확장</th><th>용도</th></tr></thead>
+      <tbody>
+        <tr><td>Prettier</td><td>코드 자동 포맷팅</td></tr>
+        <tr><td>ESLint</td><td>실시간 린트 오류 표시</td></tr>
+        <tr><td>CSS Modules</td><td>CSS Module 클래스명 자동완성</td></tr>
+        <tr><td>Vitest</td><td>테스트를 에디터 내에서 실행·디버그</td></tr>
+        <tr><td>Markdown Preview Mermaid</td><td>.md 파일 내 Mermaid 다이어그램 렌더링</td></tr>
+      </tbody>
+    </table>
+
+    <!-- 알려진 제약 -->
+    <h2 id="known-issues">알려진 제약</h2>
+
+    <div class="callout callout-yellow">
+      <p><strong>Zustand v5 subscribe API 변경</strong>
+      Zustand v4까지는 <code>subscribe(selector, callback)</code> 형태로 선택적 구독이 가능했다.
+      v5에서는 <code>subscribe(listener)</code> 단일 콜백만 지원하므로, <code>usePersistence.ts</code>에서
+      이전 참조(<code>prevMemos</code>)와 비교해 실제 변경 시에만 저장하도록 구현됐다.</p>
+    </div>
+
+    <div class="callout callout-yellow">
+      <p><strong>Node.js 버전에 따른 패키지 제약</strong>
+      vitest <code>v4.x</code>와 jsdom <code>v29.x</code>는 Node <code>v20.12.0</code> 이상이 필요하다.
+      현재 환경(Node <code>v20.3.0</code>)에서는 각각 <code>v1.x</code>, <code>v24.x</code>를 사용한다.
+      기능 차이는 없으나 Node 업그레이드 후 <code>npm install</code>을 다시 실행하면 최신 버전으로 전환할 수 있다.</p>
+    </div>
+
+    <div class="callout callout-blue">
+      <p><strong>드래그 & 드롭 테스트</strong>
+      @dnd-kit은 실제 PointerEvent가 필요해 jsdom 환경에서 완전한 드래그 시뮬레이션이 어렵다.
+      드래그 동작 통합 테스트는 Playwright 또는 Cypress 같은 E2E 테스트 도구로 작성하는 것이 권장된다.</p>
+    </div>
+
+    <div class="callout callout-blue">
+      <p><strong>시퀀스 다이어그램 파일 (docs/sequence-diagrams.html)</strong>
+      Mermaid를 CDN에서 로드하므로 인터넷 연결이 필요하다.
+      오프라인 환경에서는 Node <code>v20.12.0</code> 이상에서 <code>npx @mermaid-js/mermaid-cli</code>로 PNG 변환 가능.</p>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

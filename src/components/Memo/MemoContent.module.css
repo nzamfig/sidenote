@@ -1,0 +1,137 @@
+.editorWrapper {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.editor {
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1a1a1a;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  word-break: break-word;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+
+.editor::-webkit-scrollbar {
+  width: 2px;
+}
+
+.editor::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.editor::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 1px;
+}
+
+.editor::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.editor:empty::before {
+  content: attr(data-placeholder);
+  color: rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.editor img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 줌 컨트롤: 기본 숨김, 지도 호버 시 표시 */
+:global(.memo-map .leaflet-control-zoom) {
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+  border: none !important;
+  box-shadow: none !important;
+  background: none !important;
+  display: flex !important;
+  flex-direction: column;
+  gap: 3px;
+}
+
+:global(.memo-map:hover .leaflet-control-zoom) {
+  opacity: 1;
+  pointer-events: all;
+}
+
+:global(.memo-map .leaflet-control-zoom-in),
+:global(.memo-map .leaflet-control-zoom-out) {
+  width: 24px !important;
+  height: 24px !important;
+  line-height: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: white !important;
+  border: none !important;
+  border-radius: 50% !important;
+  color: rgba(0, 0, 0, 0.5) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18) !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  text-decoration: none !important;
+  transition: color 0.1s, box-shadow 0.1s !important;
+}
+
+:global(.memo-map .leaflet-control-zoom-in:hover),
+:global(.memo-map .leaflet-control-zoom-out:hover) {
+  background: white !important;
+  color: rgba(0, 0, 0, 0.8) !important;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.28) !important;
+}
+
+/* 이미지 우측 하단 리사이즈 핸들 */
+.imgResizeHandle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: transparent;
+  border: none;
+  cursor: nwse-resize;
+  z-index: 20;
+}
+
+/* 이미지 호버 시 표시되는 정렬 툴바 */
+.imgAlignToolbar {
+  position: absolute;
+  display: flex;
+  gap: 3px;
+  padding: 2px 0;
+  z-index: 10;
+  pointer-events: all;
+}
+
+.alignBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.5);
+  padding: 0;
+  transition: color 0.1s, box-shadow 0.1s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+.alignBtn:hover {
+  color: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.28);
+}

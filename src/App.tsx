@@ -45,7 +45,7 @@ function App() {
        * pointer-events: none이므로 캔버스 클릭/더블클릭을 가로막지 않는다.
        */}
       <div className={styles.appLabel}>
-        <svg width="22" height="22" viewBox="0 0 15 15" fill="none" className={styles.appIcon}>
+        <svg width="30" height="30" viewBox="0 0 15 15" fill="none" className={styles.appIcon}>
           <rect x="1" y="1" width="9" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
           <path d="M10 3.5h3M10 6h3M10 8.5h3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
           <line x1="3.5" y1="5" x2="7.5" y2="5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round"/>
@@ -54,7 +54,7 @@ function App() {
         </svg>
         <div className={styles.appText}>
           <span className={styles.appName}>SideNote</span>
-          <span className={styles.appDesc}>웹 서핑 중 잠깐 기록하는 메모</span>
+          <span className={styles.appDesc}>웹 서핑 중 잠깐 기록을 위한 공간입니다.</span>
         </div>
       </div>
     </div>

@@ -50,7 +50,7 @@
   display: block;
 }
 
-/* 줌 컨트롤: 기본 숨김, 지도 호버 시 표시 */
+/* Zoom controls: hidden by default, shown on map hover */
 :global(.memo-map .leaflet-control-zoom) {
   opacity: 0;
   transition: opacity 0.15s;
@@ -94,7 +94,7 @@
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.28) !important;
 }
 
-/* 이미지 우측 하단 리사이즈 핸들 */
+/* Image bottom-right resize handle */
 .imgResizeHandle {
   position: absolute;
   width: 10px;
@@ -103,9 +103,10 @@
   border: none;
   cursor: nwse-resize;
   z-index: 20;
+  touch-action: none;
 }
 
-/* 이미지 호버 시 표시되는 정렬 툴바 */
+/* Alignment toolbar shown on image hover */
 .imgAlignToolbar {
   position: absolute;
   display: flex;

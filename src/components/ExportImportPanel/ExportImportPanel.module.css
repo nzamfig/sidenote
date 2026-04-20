@@ -1,4 +1,4 @@
-/* CanvasSizePanel의 trigger 버튼과 동일한 스타일 기준으로 맞춘다 */
+/* Matches the style baseline of CanvasSizePanel's trigger button */
 .panel {
   display: flex;
   align-items: center;

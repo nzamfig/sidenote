@@ -1,10 +1,10 @@
 /**
  * @file useCanvasStore.ts
- * 캔버스 영역(너비 × 높이) 상태를 관리하는 Zustand 스토어.
+ * Zustand store managing canvas area (width × height) state.
  *
- * - 초기값: 저장된 값이 없으면 현재 뷰포트 크기로 설정 (기존 동작과 동일)
- * - 변경 즉시 localStorage에 저장 (브라우저 재시작 후에도 유지)
- * - 저장 키: 'canvas-size' (memo-app-v1과 분리해 독립적으로 관리)
+ * - Initial value: falls back to current viewport size if no saved value exists
+ * - Changes are persisted to localStorage immediately (survives browser restart)
+ * - Storage key: 'canvas-size' (managed independently from memo-app-v1)
  */
 
 import { create } from 'zustand';
@@ -18,12 +18,12 @@ interface CanvasStore {
 const STORAGE_KEY = 'canvas-size';
 
 /**
- * localStorage에서 캔버스 크기를 읽어 반환한다.
+ * Reads canvas size from localStorage and returns it.
  *
- * 타입 가드로 width·height가 모두 number인지 확인하는 이유:
- * localStorage 값은 외부 입력이므로 런타임 타입 검증 없이 as-cast하면
- * 손상된 데이터가 NaN으로 들어와 캔버스가 사라질 수 있다.
- * 검증 실패 또는 키 없음(최초 실행) 시 현재 뷰포트 크기를 기본값으로 사용한다.
+ * A type guard verifies that both width and height are numbers because
+ * localStorage values are external input — casting without runtime validation
+ * could let corrupt data arrive as NaN and make the canvas disappear.
+ * Falls back to the current viewport size on validation failure or missing key (first run).
  */
 function loadSize(): { width: number; height: number } {
   try {
@@ -42,8 +42,8 @@ function loadSize(): { width: number; height: number } {
         };
       }
     }
-  } catch { /* 파싱 오류 무시 */ }
-  // 저장값 없음(최초 실행) 또는 파싱 실패 시 뷰포트 크기를 초기값으로 사용
+  } catch { /* ignore parse errors */ }
+  // No saved value (first run) or parse failure — use viewport size as default
   return { width: window.innerWidth, height: window.innerHeight };
 }
 
@@ -53,6 +53,6 @@ export const useCanvasStore = create<CanvasStore>((set) => ({
     set({ width, height });
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ width, height }));
-    } catch { /* 저장 실패 무시 */ }
+    } catch { /* ignore save failures */ }
   },
 }));

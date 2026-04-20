@@ -1,11 +1,11 @@
 /**
  * @file main.tsx
- * 앱의 진입점(entry point).
+ * Application entry point.
  *
- * React 18의 createRoot API로 루트 컴포넌트를 마운트한다.
- * StrictMode: 개발 모드에서만 컴포넌트를 의도적으로 이중 렌더링·Effect 이중 실행하여
- * 사이드 이펙트 의존성, 구식 API 사용 등의 잠재적 버그를 조기에 발견한다.
- * 프로덕션 빌드에서는 StrictMode가 동작에 영향을 주지 않는다.
+ * Mounts the root component using React 18's createRoot API.
+ * StrictMode: intentionally double-renders components and double-invokes Effects in development
+ * to surface potential bugs such as side-effect dependencies and deprecated API usage early.
+ * StrictMode has no effect on production builds.
  */
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'

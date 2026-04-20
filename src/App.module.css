@@ -5,7 +5,7 @@
   background: #e2e8f0;
 }
 
-/* CanvasSizePanel + ExportImportPanel을 가로로 묶어 화면 상단 중앙에 고정 */
+/* Groups CanvasSizePanel + ExportImportPanel horizontally and fixes them at the top center */
 .topBar {
   position: fixed;
   top: 12px;
@@ -40,6 +40,17 @@
   gap: 8px;
   pointer-events: none;
   user-select: none;
+}
+
+@media (max-width: 640px) {
+  .appLabel {
+    top: 52px;
+    left: 16px;
+  }
+
+  .appDesc {
+    font-size: 11px;
+  }
 }
 
 .appIcon {

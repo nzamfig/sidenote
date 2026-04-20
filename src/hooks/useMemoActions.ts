@@ -1,11 +1,11 @@
 /**
  * @file useMemoActions.ts
- * 특정 메모 하나에 대한 수정·삭제 액션을 묶어서 제공하는 훅.
+ * Hook that bundles update/delete actions for a single memo.
  *
- * Memo 컴포넌트가 스토어를 직접 import하는 대신 이 훅을 통해 액션을 받는다.
- * 덕분에 Memo 컴포넌트는 스토어 구조를 몰라도 되고, 테스트 시 이 훅만 모킹하면 된다.
+ * The Memo component receives actions through this hook rather than importing the store directly.
+ * This means Memo does not need to know the store shape, and only this hook needs to be mocked in tests.
  *
- * @param id - 액션을 적용할 메모의 고유 id
+ * @param id - Unique id of the memo to act on
  */
 
 import { useCallback } from 'react';
@@ -13,14 +13,14 @@ import { useMemoStore } from '../store/useMemoStore';
 import type { MemoColor } from '../types/memo';
 
 export function useMemoActions(id: string) {
-  // 스토어에서 원시 액션만 가져온다 (전체 상태를 구독하지 않음 → 불필요한 리렌더 없음)
+  // Fetch only the raw actions from the store (no full state subscription → no unnecessary re-renders)
   const updateMemo = useMemoStore((s) => s.updateMemo);
   const deleteMemo = useMemoStore((s) => s.deleteMemo);
 
   /**
-   * 메모의 본문 텍스트를 변경한다.
-   * MemoContent의 onBlur 이벤트에 연결된다.
-   * useCallback으로 감싸 id·updateMemo가 바뀌지 않으면 함수 참조를 유지한다.
+   * Updates the body text of the memo.
+   * Connected to MemoContent's onBlur event.
+   * Wrapped in useCallback to keep the function reference stable when id and updateMemo don't change.
    */
   const updateContent = useCallback(
     (content: string) => updateMemo(id, { content }),
@@ -28,8 +28,8 @@ export function useMemoActions(id: string) {
   );
 
   /**
-   * 메모의 배경 색상을 변경한다.
-   * ColorPicker의 onChange 이벤트에 연결된다.
+   * Updates the background color of the memo.
+   * Connected to ColorPicker's onChange event.
    */
   const updateColor = useCallback(
     (color: MemoColor) => updateMemo(id, { color }),
@@ -37,9 +37,9 @@ export function useMemoActions(id: string) {
   );
 
   /**
-   * 메모를 삭제한다.
-   * MemoToolbar의 삭제 버튼 onClick에 연결된다.
-   * 함수 이름을 `delete` 대신 `remove`로 사용한 이유: `delete`는 JS 예약어이기 때문.
+   * Deletes the memo.
+   * Connected to the delete button onClick in MemoToolbar.
+   * Named `remove` instead of `delete` because `delete` is a JS reserved word.
    */
   const remove = useCallback(() => deleteMemo(id), [id, deleteMemo]);
 

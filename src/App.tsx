@@ -1,15 +1,15 @@
 /**
  * @file App.tsx
- * 앱의 최상위 컴포넌트.
+ * Root component of the app.
  *
- * 네 가지를 담당한다:
- * 1. usePersistence() 호출 — 앱 전체에서 localStorage 자동 저장/복원이 동작하도록 한다.
- * 2. Canvas 렌더링 — 사용자가 지정한 크기의 메모 캔버스를 표시한다.
- * 3. 상단 중앙 툴바 — 캔버스 크기 설정 + Export/Import 버튼을 나란히 표시한다.
- * 4. 앱 식별 UI — 좌측 상단 고정 레이블(아이콘 + 앱 이름 + 설명)을 표시한다.
+ * Handles four responsibilities:
+ * 1. Calls usePersistence() — enables auto localStorage save/restore for the entire app.
+ * 2. Renders Canvas — displays the memo canvas at the user-specified size.
+ * 3. Top-center toolbar — shows the CanvasSizePanel and ExportImportPanel side by side.
+ * 4. App identity UI — shows a fixed label at the top left (icon + app name + description).
  *
- * 상태와 비즈니스 로직은 모두 Zustand 스토어와 커스텀 훅에 위임하므로
- * 이 컴포넌트는 최대한 얇게(thin) 유지한다.
+ * All state and business logic are delegated to the Zustand stores and custom hooks,
+ * keeping this component as thin as possible.
  */
 
 import { usePersistence } from './hooks/usePersistence';
@@ -20,9 +20,9 @@ import styles from './App.module.css';
 
 function App() {
   /**
-   * localStorage 동기화 훅을 최상위에서 한 번만 호출한다.
-   * - 마운트 시: localStorage → 스토어로 메모 복원
-   * - 이후: 스토어 변경 시마다 localStorage에 자동 저장
+   * Call the localStorage sync hook once at the root level.
+   * - On mount: restores memos from localStorage into the store
+   * - Afterwards: auto-saves to localStorage on every store change
    */
   usePersistence();
 
@@ -32,8 +32,8 @@ function App() {
         <Canvas />
       </div>
       {/*
-       * 상단 중앙 툴바 — position: fixed로 스크롤 무관하게 화면 상단 중앙에 고정.
-       * CanvasSizePanel과 ExportImportPanel을 가로로 나란히 배치한다.
+       * Top-center toolbar — fixed via position: fixed, stays at the top center regardless of scroll.
+       * CanvasSizePanel and ExportImportPanel are laid out horizontally side by side.
        */}
       <div className={styles.topBar}>
         <CanvasSizePanel />
@@ -41,8 +41,8 @@ function App() {
       </div>
 
       {/*
-       * 앱 식별 레이블 — position: fixed로 스크롤과 무관하게 좌측 상단에 고정.
-       * pointer-events: none이므로 캔버스 클릭/더블클릭을 가로막지 않는다.
+       * App identity label — fixed via position: fixed, stays at the top left regardless of scroll.
+       * pointer-events: none so it does not block canvas clicks/double-clicks.
        */}
       <div className={styles.appLabel}>
         <svg width="30" height="30" viewBox="0 0 15 15" fill="none" className={styles.appIcon}>
@@ -54,7 +54,10 @@ function App() {
         </svg>
         <div className={styles.appText}>
           <span className={styles.appName}>SideNote</span>
-          <span className={styles.appDesc}>웹 서핑 중 잠깐 기록을 위한 공간입니다.</span>
+          <span className={styles.appDesc}>
+            A quick notes space while browsing the web.<br />
+            All data is saved in your browser only — never sent to any server.
+          </span>
         </div>
       </div>
     </div>

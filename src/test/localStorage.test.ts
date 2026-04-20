@@ -4,7 +4,7 @@ import type { Memo } from '../types/memo';
 
 const fakeMemo: Memo = {
   id: 'test-1',
-  content: '테스트',
+  content: 'test',
   position: { x: 10, y: 20 },
   size: { width: 200, height: 200 },
   color: 'yellow',
@@ -18,31 +18,31 @@ beforeEach(() => {
 });
 
 describe('loadMemos', () => {
-  it('키가 없으면 빈 배열을 반환한다', () => {
+  it('returns an empty array when the key is missing', () => {
     expect(loadMemos()).toEqual([]);
   });
 
-  it('저장된 메모를 파싱해서 반환한다', () => {
+  it('parses and returns saved memos', () => {
     saveMemos([fakeMemo]);
     const result = loadMemos();
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('test-1');
-    expect(result[0].content).toBe('테스트');
+    expect(result[0].content).toBe('test');
   });
 
-  it('JSON이 손상되어 있으면 빈 배열을 반환한다', () => {
+  it('returns an empty array when the JSON is corrupted', () => {
     localStorage.setItem('sidenote-v1', '{broken json}');
     expect(loadMemos()).toEqual([]);
   });
 
-  it('memos 필드가 배열이 아니면 빈 배열을 반환한다', () => {
+  it('returns an empty array when the memos field is not an array', () => {
     localStorage.setItem('sidenote-v1', JSON.stringify({ memos: null, version: 1 }));
     expect(loadMemos()).toEqual([]);
   });
 });
 
 describe('saveMemos', () => {
-  it('메모를 JSON으로 직렬화해서 저장한다', () => {
+  it('serializes memos to JSON and saves them', () => {
     saveMemos([fakeMemo]);
     const raw = localStorage.getItem('sidenote-v1');
     expect(raw).not.toBeNull();
@@ -51,7 +51,7 @@ describe('saveMemos', () => {
     expect(parsed.version).toBe(1);
   });
 
-  it('빈 배열도 정상적으로 저장한다', () => {
+  it('correctly saves an empty array', () => {
     saveMemos([]);
     const raw = localStorage.getItem('sidenote-v1');
     const parsed = JSON.parse(raw!);

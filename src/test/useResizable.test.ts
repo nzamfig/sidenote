@@ -1,7 +1,7 @@
 /**
  * @file useResizable.test.ts
- * useResizable 훅의 포인터 드래그 리사이즈 동작을 검증한다.
- * jsdom은 setPointerCapture를 지원하지 않으므로 vi.fn()으로 모킹한다.
+ * Verifies the pointer drag resize behavior of the useResizable hook.
+ * jsdom does not support setPointerCapture, so it is mocked with vi.fn().
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
@@ -33,7 +33,7 @@ function simulatePointerDown(handlePointerDown: (e: React.PointerEvent<HTMLDivEl
 }
 
 describe('useResizable', () => {
-  it('pointermove 이벤트로 메모 크기를 갱신한다', () => {
+  it('updates memo size on pointermove', () => {
     act(() => { useMemoStore.getState().createMemo({ position: { x: 0, y: 0 } }); });
     const id = useMemoStore.getState().memos[0].id;
 
@@ -47,21 +47,21 @@ describe('useResizable', () => {
     expect(size.height).toBe(DEFAULT_MEMO_SIZE.height + 60);
   });
 
-  it('최소 크기 이하로 줄어들지 않는다', () => {
+  it('does not shrink below the minimum size', () => {
     act(() => { useMemoStore.getState().createMemo({ position: { x: 0, y: 0 } }); });
     const id = useMemoStore.getState().memos[0].id;
 
     const { result } = renderHook(() => useResizable(id, DEFAULT_MEMO_SIZE));
 
     act(() => { simulatePointerDown(result.current.handlePointerDown, 300, 300); });
-    act(() => { document.dispatchEvent(makePointerEvent(0, 0)); }); // 크게 줄이기
+    act(() => { document.dispatchEvent(makePointerEvent(0, 0)); }); // try to shrink a lot
 
     const { size } = useMemoStore.getState().memos[0];
     expect(size.width).toBe(MEMO_CONSTRAINTS.MIN_WIDTH);
     expect(size.height).toBe(MEMO_CONSTRAINTS.MIN_HEIGHT);
   });
 
-  it('pointerup 이벤트 후 pointermove 리스너가 제거된다', () => {
+  it('removes the pointermove listener after pointerup', () => {
     act(() => { useMemoStore.getState().createMemo({ position: { x: 0, y: 0 } }); });
     const id = useMemoStore.getState().memos[0].id;
 
@@ -69,9 +69,9 @@ describe('useResizable', () => {
 
     act(() => { simulatePointerDown(result.current.handlePointerDown, 100, 100); });
     act(() => { document.dispatchEvent(new PointerEvent('pointerup')); });
-    act(() => { document.dispatchEvent(makePointerEvent(200, 200)); }); // pointerup 후 이동
+    act(() => { document.dispatchEvent(makePointerEvent(200, 200)); }); // move after pointerup
 
-    // pointerup 이후에는 크기가 변경되지 않아야 함
+    // Size should not change after pointerup
     const { size } = useMemoStore.getState().memos[0];
     expect(size.width).toBe(DEFAULT_MEMO_SIZE.width);
     expect(size.height).toBe(DEFAULT_MEMO_SIZE.height);

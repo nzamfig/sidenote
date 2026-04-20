@@ -13,21 +13,22 @@
   box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-/* 툴바 + 날짜를 묶는 컨테이너 */
+/* Container that groups the toolbar + date */
 .titleArea {
   position: relative;
 }
 
-/* 툴바 래퍼: 기본적으로 숨기고 메모 호버 시에만 표시 */
+/* Toolbar wrapper: hidden by default, shown only on memo hover */
 .dragHandle {
   transition: opacity 0.15s;
+  touch-action: none; /* Allow dnd-kit to capture touch events for drag */
 }
 
 .memo:not(:hover) .dragHandle {
   opacity: 0;
 }
 
-/* 입력일시: 비호버 시 중앙 표시, 호버 시 숨김 */
+/* Creation timestamp: shown centered when not hovered, hidden on hover */
 .createdAt {
   position: absolute;
   inset: 0;
@@ -46,7 +47,7 @@
   opacity: 0;
 }
 
-/* 하단 외부 액션 버튼 바 (이미지·지도 삽입) */
+/* Bottom action button bar (for image/map insertion) */
 .actionBar {
   position: absolute;
   left: 8px;
@@ -82,7 +83,7 @@
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.28);
 }
 
-/* 오른쪽 하단 리사이즈 핸들 */
+/* Bottom-right resize handle */
 .resizeHandle {
   position: absolute;
   right: 0;
@@ -91,9 +92,10 @@
   height: 18px;
   cursor: nwse-resize;
   border-radius: 0 0 8px 0;
+  touch-action: none;
 }
 
-/* 색상별 배경 */
+/* Per-color backgrounds */
 .memo[data-color='yellow'] { background: #fef9c3; }
 .memo[data-color='pink']   { background: #ffe4e6; }
 .memo[data-color='blue']   { background: #dbeafe; }

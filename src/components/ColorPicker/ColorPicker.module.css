@@ -29,6 +29,6 @@
 .swatch[data-color='green']  { background: #86efac; }
 .swatch[data-color='purple'] { background: #c4b5fd; }
 .swatch[data-color='orange'] { background: #fdba74; }
-/* 흰색은 배경과 구분되도록 테두리 색을 별도 지정 */
+/* White swatch gets an explicit border so it's visible against light backgrounds */
 .swatch[data-color='white']  { background: #ffffff; border-color: #d1d5db; }
 .swatch[data-color='white'][data-active='true'] { border-color: #333; }

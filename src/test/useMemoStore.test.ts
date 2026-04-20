@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useMemoStore } from '../store/useMemoStore';
 
-// 각 테스트 전 스토어 초기화
+// Reset store before each test
 beforeEach(() => {
   useMemoStore.setState({ memos: [], activeMemoId: null });
 });
 
 describe('createMemo', () => {
-  it('올바른 위치와 기본값으로 메모를 생성한다', () => {
+  it('creates a memo with the correct position and default values', () => {
     const { createMemo } = useMemoStore.getState();
     createMemo({ position: { x: 100, y: 200 } });
 
@@ -19,7 +19,7 @@ describe('createMemo', () => {
     expect(memos[0].id).toBeTruthy();
   });
 
-  it('지정된 색상으로 메모를 생성한다', () => {
+  it('creates a memo with the specified color', () => {
     const { createMemo } = useMemoStore.getState();
     createMemo({ position: { x: 0, y: 0 }, color: 'pink' });
 
@@ -27,7 +27,7 @@ describe('createMemo', () => {
     expect(memos[0].color).toBe('pink');
   });
 
-  it('생성된 메모가 activeMemoId로 설정된다', () => {
+  it('sets the created memo as activeMemoId', () => {
     const { createMemo } = useMemoStore.getState();
     createMemo({ position: { x: 0, y: 0 } });
 
@@ -37,7 +37,7 @@ describe('createMemo', () => {
 });
 
 describe('deleteMemo', () => {
-  it('id로 메모를 삭제한다', () => {
+  it('deletes a memo by id', () => {
     const { createMemo, deleteMemo } = useMemoStore.getState();
     createMemo({ position: { x: 0, y: 0 } });
     createMemo({ position: { x: 100, y: 100 } });
@@ -51,7 +51,7 @@ describe('deleteMemo', () => {
     expect(updated.find((m) => m.id === firstId)).toBeUndefined();
   });
 
-  it('삭제 시 다른 메모에 영향을 주지 않는다', () => {
+  it('does not affect other memos when deleting', () => {
     const { createMemo, deleteMemo } = useMemoStore.getState();
     createMemo({ position: { x: 0, y: 0 } });
     createMemo({ position: { x: 100, y: 100 } });
@@ -66,7 +66,7 @@ describe('deleteMemo', () => {
 });
 
 describe('moveMemo', () => {
-  it('위치를 업데이트하고 다른 필드는 변경하지 않는다', () => {
+  it('updates position without changing other fields', () => {
     const { createMemo, moveMemo } = useMemoStore.getState();
     createMemo({ position: { x: 0, y: 0 } });
 
@@ -82,7 +82,7 @@ describe('moveMemo', () => {
 });
 
 describe('reorderToTop', () => {
-  it('메모를 배열 마지막으로 이동한다', () => {
+  it('moves a memo to the end of the array', () => {
     const { createMemo, reorderToTop } = useMemoStore.getState();
     createMemo({ position: { x: 0, y: 0 } });
     createMemo({ position: { x: 100, y: 100 } });
@@ -96,7 +96,7 @@ describe('reorderToTop', () => {
     expect(updated[updated.length - 1].id).toBe(firstId);
   });
 
-  it('이미 마지막인 메모는 변경하지 않는다', () => {
+  it('does not change a memo that is already last', () => {
     const { createMemo, reorderToTop } = useMemoStore.getState();
     createMemo({ position: { x: 0, y: 0 } });
     createMemo({ position: { x: 100, y: 100 } });
@@ -111,14 +111,14 @@ describe('reorderToTop', () => {
 });
 
 describe('hydrateFromStorage', () => {
-  it('메모 배열을 통째로 교체한다', () => {
+  it('replaces the entire memos array', () => {
     const { createMemo, hydrateFromStorage } = useMemoStore.getState();
     createMemo({ position: { x: 0, y: 0 } });
 
     const fakeMemos = [
       {
         id: 'test-1',
-        content: '저장된 메모',
+        content: 'saved memo',
         position: { x: 50, y: 50 },
         size: { width: 200, height: 200 },
         color: 'blue' as const,
@@ -131,6 +131,6 @@ describe('hydrateFromStorage', () => {
     const { memos } = useMemoStore.getState();
     expect(memos).toHaveLength(1);
     expect(memos[0].id).toBe('test-1');
-    expect(memos[0].content).toBe('저장된 메모');
+    expect(memos[0].content).toBe('saved memo');
   });
 });

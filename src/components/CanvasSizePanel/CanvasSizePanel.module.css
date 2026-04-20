@@ -1,9 +1,9 @@
-/* 위치는 부모 .topBar가 담당하며, 이 컨테이너는 레이아웃 단위만 처리한다 */
+/* Positioning is handled by the parent .topBar; this container only manages its own layout */
 .panel {
   position: relative;
 }
 
-/* ── 축소 상태: 크기 표시 버튼 ── */
+/* ── Collapsed state: size display button ── */
 .trigger {
   display: flex;
   align-items: center;
@@ -42,7 +42,7 @@
   color: rgba(0, 0, 0, 0.55);
 }
 
-/* ── 확장 상태: 입력 폼 ── */
+/* ── Expanded state: input form ── */
 .form {
   display: flex;
   align-items: center;
@@ -72,7 +72,7 @@
   outline: none;
   text-align: center;
   transition: border-color 0.12s;
-  /* 스핀 버튼 숨기기 */
+  /* Hide spin buttons */
   -moz-appearance: textfield;
 }
 
@@ -85,7 +85,7 @@
   border-color: #3b82f6;
 }
 
-/* 유효하지 않은 값 입력 시 붉은 테두리 */
+/* Red border when an invalid value is entered */
 .form[data-error='true'] .input {
   border-color: #ef4444;
 }

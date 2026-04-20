@@ -1,51 +1,34 @@
 /**
  * @file useCanvasInteraction.ts
- * 캔버스(배경 영역)와의 사용자 인터랙션을 처리하는 훅.
+ * Hook that handles user interactions with the canvas (background area).
  *
- * 담당하는 이벤트:
- * - 더블클릭 → 해당 위치에 새 메모 생성
- * - 단일 클릭(캔버스 배경 직접 클릭) → 메모 선택 해제
+ * Handles these events:
+ * - Double-click (mouse) → create a new memo at that position
+ * - Double-tap (touch)   → create a new memo at that position
+ * - Single click/tap (directly on the canvas background) → deselect the active memo
  *
- * Canvas 컴포넌트에서 사용하며, canvasRef를 Canvas의 최상위 div에 연결해야 한다.
+ * Used in the Canvas component; canvasRef must be attached to the root canvas div.
  */
 
 import { useCallback, useRef } from 'react';
 import { useMemoStore } from '../store/useMemoStore';
 
 export function useCanvasInteraction() {
-  /**
-   * 캔버스 DOM 요소에 대한 ref.
-   * 클릭 좌표를 뷰포트 기준에서 캔버스 기준으로 변환할 때 사용한다.
-   * (getBoundingClientRect로 캔버스의 뷰포트 내 위치를 구하기 위함)
-   */
   const canvasRef = useRef<HTMLDivElement>(null);
-
   const createMemo = useMemoStore((s) => s.createMemo);
   const setActiveMemo = useMemoStore((s) => s.setActiveMemo);
 
   /**
-   * 캔버스 더블클릭 핸들러.
-   *
-   * 좌표 변환 방식:
-   *   캔버스 기준 x = 마우스 뷰포트 x (e.clientX) - 캔버스 뷰포트 x (rect.left)
-   *   캔버스 기준 y = 마우스 뷰포트 y (e.clientY) - 캔버스 뷰포트 y (rect.top)
-   *
-   * useCallback을 사용해 createMemo 참조가 바뀌지 않으면 함수를 재생성하지 않는다.
-   * (불필요한 Canvas 리렌더 방지)
+   * Tracks the previous tap to detect double-tap on touch devices.
+   * Stores the time and canvas-relative position of the last tap.
    */
+  const lastTapRef = useRef<{ time: number; x: number; y: number } | null>(null);
+
   const handleDoubleClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      /**
-       * 이벤트 버블링 방어:
-       * 기존 메모(.memo 요소) 위에서 더블클릭하면 이 핸들러까지 이벤트가 버블링된다.
-       * data-memo-id 속성을 가진 조상 요소가 있으면 메모 위에서 발생한 이벤트이므로 무시한다.
-       */
       if ((e.target as HTMLElement).closest('[data-memo-id]')) return;
-
       const canvas = canvasRef.current;
       if (!canvas) return;
-
-      // 캔버스의 뷰포트 기준 위치를 가져와 클릭 좌표를 캔버스 기준으로 변환
       const rect = canvas.getBoundingClientRect();
       createMemo({
         position: {
@@ -57,13 +40,6 @@ export function useCanvasInteraction() {
     [createMemo]
   );
 
-  /**
-   * 캔버스 단일 클릭 핸들러.
-   *
-   * e.target이 canvasRef.current 자체일 때만(= 캔버스 배경을 직접 클릭)
-   * 메모 선택을 해제한다.
-   * 메모 위를 클릭하면 e.target이 메모 내부 요소이므로 조건이 거짓이 되어 무시된다.
-   */
   const handleCanvasClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (e.target === canvasRef.current) {
@@ -73,5 +49,41 @@ export function useCanvasInteraction() {
     [setActiveMemo]
   );
 
-  return { canvasRef, handleDoubleClick, handleCanvasClick };
+  /**
+   * Touch-end handler that detects double-tap for memo creation on mobile.
+   *
+   * Two taps within 300ms and within 30px of each other are treated as a double-tap.
+   * The memo is placed at the position of the second tap.
+   */
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if ((e.target as HTMLElement).closest('[data-memo-id]')) return;
+      const touch = e.changedTouches[0];
+      if (!touch) return;
+
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      const now = Date.now();
+      const last = lastTapRef.current;
+
+      if (
+        last &&
+        now - last.time < 300 &&
+        Math.abs(x - last.x) < 30 &&
+        Math.abs(y - last.y) < 30
+      ) {
+        // Double-tap confirmed
+        lastTapRef.current = null;
+        createMemo({ position: { x, y } });
+      } else {
+        lastTapRef.current = { time: now, x, y };
+      }
+    },
+    [createMemo]
+  );
+
+  return { canvasRef, handleDoubleClick, handleCanvasClick, handleTouchEnd };
 }

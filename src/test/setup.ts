@@ -1,11 +1,11 @@
 /**
  * @file setup.ts
- * Vitest 전역 테스트 환경 설정.
- * vite.config.ts의 test.setupFiles에 등록되어 각 테스트 파일 실행 전에 한 번 로드된다.
+ * Global Vitest test environment setup.
+ * Registered in vite.config.ts test.setupFiles; loaded once before each test file runs.
  */
 import '@testing-library/jest-dom';
 
-// jsdom이 PointerEvent를 지원하지 않으므로 MouseEvent 기반 폴리필 추가
+// jsdom does not support PointerEvent, so add a MouseEvent-based polyfill
 if (typeof PointerEvent === 'undefined') {
   class PointerEventPolyfill extends MouseEvent {
     pointerId: number;

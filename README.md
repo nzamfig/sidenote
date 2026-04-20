@@ -1,48 +1,48 @@
 # SideNote
 
-웹 서핑 중 잠깐 기록을 위한 공간입니다.
+A quick notes space for capturing ideas while browsing the web.
 https://nzamfig.github.io/sidenote/
 
-## 주요 기능
+## Features
 
-- **메모 생성/삭제** — 캔버스 빈 곳을 더블클릭해 메모 생성, 툴바 ✕ 버튼으로 삭제
-- **드래그 이동** — 메모 상단 툴바를 드래그해 위치 이동
-- **리사이즈** — 오른쪽 하단 핸들을 드래그해 크기 조절
-- **색상 변경** — 툴바의 색상 스와치로 6가지 배경색 선택
-- **이미지 삽입** — 로컬 이미지를 커서 위치에 삽입, 드래그로 크기 조절, 좌/중/우 정렬
-- **지도 삽입** — OpenStreetMap 기반 Leaflet 지도 삽입, 마커 추가/삭제
-- **캔버스 크기 설정** — 화면 상단 중앙 버튼으로 메모 작업 영역 크기 지정
-- **자동 저장** — 모든 변경사항이 localStorage에 자동 저장되어 새로고침 후에도 유지
+- **Create/Delete memos** — double-click on the canvas to create a memo, delete with the ✕ button in the toolbar
+- **Drag to move** — drag the top toolbar to reposition a memo
+- **Resize** — drag the bottom-right handle to resize
+- **Color picker** — choose from 6 background colors via the toolbar swatches
+- **Insert images** — insert local images at the cursor position, resize by dragging, align left/center/right
+- **Insert maps** — insert a Leaflet/OpenStreetMap map, add/remove markers
+- **Canvas size** — set the memo workspace size via the button at the top center
+- **Auto-save** — all changes are automatically saved to localStorage and persist after refresh
 
-## 기술 스택
+## Tech Stack
 
-| 역할 | 라이브러리 |
-|------|-----------|
+| Role | Library |
+|------|---------|
 | UI | React 18 + TypeScript |
-| 상태 관리 | Zustand v5 |
-| 드래그&드롭 | @dnd-kit/core |
-| 지도 | Leaflet / OpenStreetMap |
-| 빌드 | Vite |
-| 테스트 | Vitest + @testing-library/react |
+| State | Zustand v5 |
+| Drag & Drop | @dnd-kit/core |
+| Maps | Leaflet / OpenStreetMap |
+| Build | Vite |
+| Tests | Vitest + @testing-library/react |
 
-## 시작하기
+## Getting Started
 
 ```bash
 npm install
-npm run dev      # 개발 서버 (http://localhost:5173)
-npm run build    # 프로덕션 빌드
-npm run test     # 테스트 실행
-npm run lint     # ESLint 검사
+npm run dev      # dev server (http://localhost:5173)
+npm run build    # production build
+npm run test     # run tests
+npm run lint     # ESLint check
 ```
 
-## 사용 방법
+## Usage
 
-| 동작 | 방법 |
-|------|------|
-| 메모 추가 | 캔버스 빈 곳 더블클릭 |
-| 메모 이동 | 상단 툴바 드래그 |
-| 메모 삭제 | 툴바 ✕ 버튼 |
-| 크기 조절 | 우측 하단 핸들 드래그 |
-| 이미지 추가 | 메모 하단 이미지 버튼 → 파일 선택 |
-| 지도 추가 | 메모 하단 지도 버튼 |
-| 캔버스 크기 변경 | 화면 상단 중앙 크기 표시 버튼 클릭 |
+| Action | How |
+|--------|-----|
+| Add memo | Double-click on the canvas |
+| Move memo | Drag the top toolbar |
+| Delete memo | Toolbar ✕ button |
+| Resize | Drag the bottom-right handle |
+| Add image | Memo bottom image button → select file |
+| Add map | Memo bottom map button |
+| Change canvas size | Click the size indicator at the top center |

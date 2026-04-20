@@ -36,6 +36,7 @@ interface MemoContentProps {
   content: string;
   autoFocus?: boolean;
   onChange: (content: string) => void;
+  onAutoResize?: (scrollHeight: number) => void;
 }
 
 type AlignType = 'left' | 'center' | 'right';
@@ -388,7 +389,7 @@ function initLeafletMap(container: HTMLDivElement, onSave: () => void) {
 }
 
 export const MemoContent = forwardRef<MemoContentHandle, MemoContentProps>(
-  function MemoContent({ content, autoFocus, onChange }, ref) {
+  function MemoContent({ content, autoFocus, onChange, onAutoResize }, ref) {
     const divRef = useRef<HTMLDivElement>(null);
     const wrapperRef = useRef<HTMLDivElement>(null);
     const savedRangeRef = useRef<Range | null>(null);
@@ -448,13 +449,17 @@ export const MemoContent = forwardRef<MemoContentHandle, MemoContentProps>(
         }
 
         const img = document.createElement('img');
-        img.src = src;
         img.style.maxWidth = `${maxWidth}px`;
         img.style.maxHeight = `${maxHeight}px`;
         img.style.width = 'auto';
         img.style.height = 'auto';
         img.style.display = 'block';
         img.style.marginRight = 'auto';
+        img.onload = () => {
+          const d = divRef.current;
+          if (d && onAutoResize) onAutoResize(d.scrollHeight);
+        };
+        img.src = src;
 
         const currentSel = window.getSelection();
         if (currentSel && currentSel.rangeCount > 0) {
@@ -522,7 +527,10 @@ export const MemoContent = forwardRef<MemoContentHandle, MemoContentProps>(
         }
 
         const onSave = () => { if (div) onChange(getCleanedHTML(div)); };
-        requestAnimationFrame(() => initLeafletMap(container, onSave));
+        requestAnimationFrame(() => {
+          initLeafletMap(container, onSave);
+          if (onAutoResize) onAutoResize(div.scrollHeight);
+        });
 
         onChange(getCleanedHTML(div));
       },

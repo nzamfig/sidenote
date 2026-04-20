@@ -46,6 +46,7 @@ export const Memo = reactMemo(function Memo({ memo, zIndex }: MemoProps) {
   const reorderToTop = useMemoStore((s) => s.reorderToTop);
   const setActiveMemo = useMemoStore((s) => s.setActiveMemo);
   const activeMemoId = useMemoStore((s) => s.activeMemoId);
+  const resizeMemo = useMemoStore((s) => s.resizeMemo);
 
   /** Whether this memo is currently selected (active) → reflected via CSS data-active attribute */
   const isActive = activeMemoId === memo.id;
@@ -103,6 +104,13 @@ export const Memo = reactMemo(function Memo({ memo, zIndex }: MemoProps) {
   const handlePointerDown = () => {
     reorderToTop(memo.id);
     setActiveMemo(memo.id);
+  };
+
+  const handleAutoResize = (scrollHeight: number) => {
+    const neededHeight = scrollHeight + MEMO_UI.CHROME_HEIGHT;
+    if (neededHeight > memo.size.height) {
+      resizeMemo(memo.id, { width: memo.size.width, height: neededHeight });
+    }
   };
 
   /**
@@ -189,6 +197,7 @@ export const Memo = reactMemo(function Memo({ memo, zIndex }: MemoProps) {
         content={memo.content}
         autoFocus={isNew}
         onChange={updateContent}
+        onAutoResize={handleAutoResize}
       />
 
       {/* Bottom action button bar (visible only on hover) */}

@@ -49,19 +49,42 @@ export function usePersistence() {
   useEffect(() => {
     let prevMemos = useMemoStore.getState().memos;
     let saveTimer: ReturnType<typeof setTimeout> | null = null;
+    let pendingMemos: ReturnType<typeof useMemoStore.getState>['memos'] | null = null;
+
+    const flushPending = () => {
+      if (pendingMemos !== null) {
+        if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+        saveMemos(pendingMemos);
+        pendingMemos = null;
+      }
+    };
 
     const unsubscribe = useMemoStore.subscribe((state) => {
       if (state.memos !== prevMemos) {
         const memosToSave = state.memos;
         prevMemos = memosToSave;
+        pendingMemos = memosToSave;
         if (saveTimer) clearTimeout(saveTimer);
-        saveTimer = setTimeout(() => saveMemos(memosToSave), 300);
+        saveTimer = setTimeout(() => {
+          saveMemos(memosToSave);
+          pendingMemos = null;
+        }, 300);
       }
     });
+
+    // Flush any pending debounced save immediately when the page is hidden
+    // (covers mobile pull-to-refresh, tab switching, and app backgrounding)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') flushPending();
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('pagehide', flushPending);
 
     return () => {
       unsubscribe();
       if (saveTimer) clearTimeout(saveTimer);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('pagehide', flushPending);
     };
   }, []);
 }

@@ -56,7 +56,8 @@ function App() {
           <span className={styles.appName}>SideNote</span>
           <span className={styles.appDesc}>
             A quick notes space while browsing the web.<br />
-            All data is saved in your browser only — never sent to any server.
+            All data is saved in your browser only.<br />
+            Never sent to any server.
           </span>
         </div>
       </div>

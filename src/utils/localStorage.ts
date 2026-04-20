@@ -82,7 +82,13 @@ export function saveMemos(memos: Memo[]): void {
   try {
     const state: PersistedState = { memos, version: CURRENT_VERSION };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch {
-    // Save failure is non-fatal — the app continues to function
+  } catch (e) {
+    // QuotaExceededError: base64-encoded images can easily exceed the browser's localStorage
+    // limit (typically 2.5–5 MB on mobile). The previous localStorage snapshot is preserved
+    // and the unsaved change is silently lost. This is non-fatal; no data corruption occurs.
+    if (!(e instanceof DOMException && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED'))) {
+      // Unexpected error — re-throw so it surfaces in the browser console
+      console.warn('[sidenote] localStorage save failed:', e);
+    }
   }
 }

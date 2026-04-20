@@ -123,7 +123,7 @@ export function Canvas() {
 
         {/* Usage hint — pointer-events: none so it doesn't intercept canvas events */}
         <div className={styles.hint}>
-          Double-click / Double-tap to add a memo
+          Double-click / Double-tap<br />to add a memo
         </div>
       </div>
     </DndContext>

@@ -21,6 +21,7 @@ import { useResizable } from '../../hooks/useResizable';
 import { useMemoStore } from '../../store/useMemoStore';
 import { MemoToolbar } from '../MemoToolbar/MemoToolbar';
 import { MemoContent, type MemoContentHandle } from './MemoContent';
+import { resizeImage } from '../../utils/resizeImage';
 import { MEMO_UI } from '../../constants';
 import styles from './Memo.module.css';
 
@@ -127,21 +128,20 @@ export const Memo = reactMemo(function Memo({ memo, zIndex }: MemoProps) {
 
   /**
    * Handles file selection.
-   * - Reads the file as a base64 DataURL via FileReader, then calls MemoContent.insertImage.
-   * - Max image size is constrained to the content area (memo size minus chrome area).
+   * - Resizes the image to at most 1200px on the longest side (JPEG 0.82) to keep
+   *   localStorage usage under control (~500KB base64 per image → 10 images in 5MB).
+   * - Calls MemoContent.insertImage with the (possibly resized) data URL.
    */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const src = event.target?.result as string;
-      const maxWidth = memo.size.width - MEMO_UI.CONTENT_PADDING;
-      const maxHeight = memo.size.height - MEMO_UI.CHROME_HEIGHT;
+    const maxWidth = memo.size.width - MEMO_UI.CONTENT_PADDING;
+    const maxHeight = memo.size.height - MEMO_UI.CHROME_HEIGHT;
+
+    resizeImage(file).then((src) => {
       contentRef.current?.insertImage(src, maxWidth, maxHeight);
-    };
-    reader.readAsDataURL(file);
+    });
 
     // Reset value so the same file can be uploaded again consecutively
     e.target.value = '';

@@ -10,11 +10,13 @@
 
 import { useRef } from 'react';
 import { useMemoStore } from '../../store/useMemoStore';
+import { usePWAInstall } from '../../hooks/usePWAInstall';
 import type { Memo } from '../../types/memo';
 import styles from './ExportImportPanel.module.css';
 
 export function ExportImportPanel() {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { canInstall, install } = usePWAInstall();
 
   const handleExport = () => {
     const memos = useMemoStore.getState().memos;
@@ -95,6 +97,20 @@ export function ExportImportPanel() {
         </svg>
         <span className={styles.label}>Import</span>
       </button>
+
+      {canInstall && (
+        <>
+          <div className={styles.divider} />
+          <button className={styles.btn} title="Install App" onClick={install}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/>
+              <path d="M12 8v8M8 12l4 4 4-4"/>
+            </svg>
+            <span className={styles.label}>Install</span>
+          </button>
+        </>
+      )}
 
       <input
         ref={fileInputRef}

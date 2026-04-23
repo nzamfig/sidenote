@@ -9,13 +9,7 @@
 
 import type { Memo, PersistedState } from '../types/memo';
 import { CURRENT_VERSION } from '../types/memo';
-
-/**
- * Key used in localStorage.
- * The key name includes a version so that, if the schema changes drastically,
- * a different key can be used to start fresh without conflicting with old data.
- */
-const STORAGE_KEY = 'sidenote-v1';
+import { STORAGE_KEYS } from '../constants';
 
 /**
  * Upgrades the schema version of persisted data to match the current version.
@@ -53,7 +47,7 @@ function migrate(state: PersistedState): Memo[] {
  */
 export function loadMemos(): Memo[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEYS.MEMOS);
     if (!raw) return []; // first run: key not found
 
     const parsed: PersistedState = JSON.parse(raw);
@@ -81,7 +75,7 @@ export function loadMemos(): Memo[] {
 export function saveMemos(memos: Memo[]): void {
   try {
     const state: PersistedState = { memos, version: CURRENT_VERSION };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(STORAGE_KEYS.MEMOS, JSON.stringify(state));
   } catch (e) {
     // QuotaExceededError: base64-encoded images can easily exceed the browser's localStorage
     // limit (typically 2.5–5 MB on mobile). The previous localStorage snapshot is preserved

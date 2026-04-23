@@ -14,6 +14,7 @@ import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core';
 import { useMemoStore } from '../../store/useMemoStore';
 import { useCanvasStore } from '../../store/useCanvasStore';
+import { CANVAS_UI } from '../../constants';
 import { useCanvasInteraction } from '../../hooks/useCanvasInteraction';
 import { Memo } from '../Memo/Memo';
 import styles from './Canvas.module.css';
@@ -89,13 +90,12 @@ export function Canvas() {
     const y = Math.max(0, rawY);
 
     // If the memo overflows the right or bottom edge, expand the canvas to fit it
-    const EXPAND_PADDING = 40;
     const memoRight = x + memo.size.width;
     const memoBottom = y + memo.size.height;
     if (canvasW > 0 && (memoRight > canvasW || memoBottom > canvasH)) {
       setCanvasSize(
-        Math.ceil(Math.max(canvasW, memoRight + EXPAND_PADDING)),
-        Math.ceil(Math.max(canvasH, memoBottom + EXPAND_PADDING))
+        Math.ceil(Math.max(canvasW, memoRight + CANVAS_UI.EXPAND_PADDING)),
+        Math.ceil(Math.max(canvasH, memoBottom + CANVAS_UI.EXPAND_PADDING))
       );
     }
 

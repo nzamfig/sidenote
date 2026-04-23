@@ -11,7 +11,7 @@
 import { useRef } from 'react';
 import { useMemoStore } from '../../store/useMemoStore';
 import { usePWAInstall } from '../../hooks/usePWAInstall';
-import type { Memo } from '../../types/memo';
+import { isValidMemo } from '../../utils/validation';
 import styles from './ExportImportPanel.module.css';
 
 export function ExportImportPanel() {
@@ -50,13 +50,7 @@ export function ExportImportPanel() {
           typeof parsed === 'object' &&
           Array.isArray((parsed as Record<string, unknown>).memos)
         ) {
-          const memos = (parsed as { memos: unknown[] }).memos.filter(
-            (m): m is Memo =>
-              m !== null &&
-              typeof m === 'object' &&
-              typeof (m as Record<string, unknown>).id === 'string' &&
-              typeof (m as Record<string, unknown>).content === 'string'
-          );
+          const memos = (parsed as { memos: unknown[] }).memos.filter(isValidMemo);
           if (!window.confirm(`Import ${memos.length} memo(s).\nAll current memos will be deleted. Continue?`)) return;
           useMemoStore.getState().hydrateFromStorage(memos);
         } else {

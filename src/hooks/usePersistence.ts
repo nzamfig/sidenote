@@ -12,6 +12,7 @@
 import { useEffect } from 'react';
 import { useMemoStore } from '../store/useMemoStore';
 import { loadMemos, saveMemos } from '../utils/localStorage';
+import { INTERACTION_TIMING } from '../constants';
 
 export function usePersistence() {
   // Subscribe to store action (function reference never changes, so no re-render is triggered)
@@ -68,7 +69,7 @@ export function usePersistence() {
         saveTimer = setTimeout(() => {
           saveMemos(memosToSave);
           pendingMemos = null;
-        }, 300);
+        }, INTERACTION_TIMING.SAVE_DEBOUNCE_MS);
       }
     });
 

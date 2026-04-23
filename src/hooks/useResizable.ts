@@ -17,31 +17,25 @@ export function useResizable(memoId: string, currentSize: MemoSize) {
 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
-      // Prevent dnd-kit from starting a drag
       e.stopPropagation();
       e.preventDefault();
 
-      // Capture the pointer to this element so fast mouse movement doesn't drop events
       e.currentTarget.setPointerCapture(e.pointerId);
 
       const startX = e.clientX;
       const startY = e.clientY;
       const startWidth = currentSize.width;
       const startHeight = currentSize.height;
+      const ac = new AbortController();
+      const { signal } = ac;
 
-      const handlePointerMove = (moveEvent: PointerEvent) => {
+      document.addEventListener('pointermove', (moveEvent: PointerEvent) => {
         const newWidth = Math.ceil(Math.max(MEMO_CONSTRAINTS.MIN_WIDTH, startWidth + (moveEvent.clientX - startX)));
         const newHeight = Math.ceil(Math.max(MEMO_CONSTRAINTS.MIN_HEIGHT, startHeight + (moveEvent.clientY - startY)));
         resizeMemo(memoId, { width: newWidth, height: newHeight });
-      };
+      }, { signal });
 
-      const handlePointerUp = () => {
-        document.removeEventListener('pointermove', handlePointerMove);
-        document.removeEventListener('pointerup', handlePointerUp);
-      };
-
-      document.addEventListener('pointermove', handlePointerMove);
-      document.addEventListener('pointerup', handlePointerUp);
+      document.addEventListener('pointerup', () => ac.abort(), { signal });
     },
     [memoId, currentSize, resizeMemo]
   );

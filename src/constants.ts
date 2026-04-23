@@ -34,3 +34,41 @@ export const MEMO_CONSTRAINTS = {
   /** Minimum memo height (px). */
   MIN_HEIGHT: 120,
 } as const;
+
+/**
+ * Interaction timing thresholds.
+ */
+export const INTERACTION_TIMING = {
+  /** Max milliseconds between two taps to count as a double-tap. */
+  DOUBLE_TAP_MAX_MS: 300,
+  /** Max pixel distance between two taps to count as a double-tap. */
+  DOUBLE_TAP_MAX_DIST: 30,
+  /** Debounce delay (ms) before writing memos to localStorage. */
+  SAVE_DEBOUNCE_MS: 300,
+} as const;
+
+/**
+ * Default map center and tile configuration (CartoDB Positron greyscale).
+ */
+export const MAP_DEFAULTS = {
+  LAT: 37.5665,
+  LNG: 126.9780,
+  ZOOM: 11,
+  TILE_URL: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+  TILE_ATTRIBUTION:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' +
+    ' &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  TILE_SUBDOMAINS: 'abcd',
+  TILE_MAX_ZOOM: 20,
+} as const;
+
+/** Extra canvas space added when a memo is dragged beyond the current boundary (px). */
+export const CANVAS_UI = {
+  EXPAND_PADDING: 40,
+} as const;
+
+/** localStorage keys used across the app. */
+export const STORAGE_KEYS = {
+  MEMOS: 'sidenote-v1',
+  CANVAS_SIZE: 'canvas-size',
+} as const;

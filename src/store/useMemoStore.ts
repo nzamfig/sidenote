@@ -82,6 +82,11 @@ interface MemoState {
   hydrateFromStorage: (memos: Memo[]) => void;
 }
 
+/** Returns a new memos array with the given id's fields merged and updatedAt refreshed. */
+function patchMemo(memos: Memo[], id: string, patch: Partial<Memo>): Memo[] {
+  return memos.map((m) => (m.id === id ? { ...m, ...patch, updatedAt: Date.now() } : m));
+}
+
 /**
  * Zustand store instance.
  * Components subscribe to only the state/actions they need via `useMemoStore(selector)`.
@@ -110,12 +115,7 @@ export const useMemoStore = create<MemoState>((set) => ({
   },
 
   updateMemo: (id, changes) => {
-    set((state) => ({
-      memos: state.memos.map((m) =>
-        // Only change the memo with matching id; return others unchanged
-        m.id === id ? { ...m, ...changes, updatedAt: Date.now() } : m
-      ),
-    }));
+    set((state) => ({ memos: patchMemo(state.memos, id, changes) }));
   },
 
   deleteMemo: (id) => {
@@ -127,19 +127,11 @@ export const useMemoStore = create<MemoState>((set) => ({
   },
 
   moveMemo: (id, position) => {
-    set((state) => ({
-      memos: state.memos.map((m) =>
-        m.id === id ? { ...m, position, updatedAt: Date.now() } : m
-      ),
-    }));
+    set((state) => ({ memos: patchMemo(state.memos, id, { position }) }));
   },
 
   resizeMemo: (id, size) => {
-    set((state) => ({
-      memos: state.memos.map((m) =>
-        m.id === id ? { ...m, size, updatedAt: Date.now() } : m
-      ),
-    }));
+    set((state) => ({ memos: patchMemo(state.memos, id, { size }) }));
   },
 
   setActiveMemo: (id) => set({ activeMemoId: id }),

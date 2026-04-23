@@ -22,6 +22,7 @@ import { useMemoStore } from '../../store/useMemoStore';
 import { MemoToolbar } from '../MemoToolbar/MemoToolbar';
 import { MemoContent, type MemoContentHandle } from './MemoContent';
 import { resizeImage } from '../../utils/resizeImage';
+import { formatTimestamp } from '../../utils/formatDate';
 import { MEMO_UI } from '../../constants';
 import styles from './Memo.module.css';
 
@@ -147,16 +148,7 @@ export const Memo = reactMemo(function Memo({ memo, zIndex }: MemoProps) {
     e.target.value = '';
   };
 
-  /**
-   * Formats the creation timestamp as YYYY-MM-DD HH:MM:SS.
-   * Written as an IIFE to compute the value once rather than creating a new Date on every render.
-   * (memo.createdAt never changes, so the result is always the same as long as memo is stable)
-   */
-  const formattedDate = (() => {
-    const d = new Date(memo.createdAt);
-    const pad = (n: number) => String(n).padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-  })();
+  const formattedDate = formatTimestamp(memo.createdAt);
 
   return (
     <div

@@ -12,6 +12,7 @@
 
 import { useCallback, useRef } from 'react';
 import { useMemoStore } from '../store/useMemoStore';
+import { INTERACTION_TIMING } from '../constants';
 
 export function useCanvasInteraction() {
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -83,9 +84,9 @@ export function useCanvasInteraction() {
 
       if (
         last &&
-        now - last.time < 300 &&
-        Math.abs(x - last.x) < 30 &&
-        Math.abs(y - last.y) < 30
+        now - last.time < INTERACTION_TIMING.DOUBLE_TAP_MAX_MS &&
+        Math.abs(x - last.x) < INTERACTION_TIMING.DOUBLE_TAP_MAX_DIST &&
+        Math.abs(y - last.y) < INTERACTION_TIMING.DOUBLE_TAP_MAX_DIST
       ) {
         // Double-tap confirmed — suppress the synthetic dblclick the browser will fire next
         lastTapRef.current = null;

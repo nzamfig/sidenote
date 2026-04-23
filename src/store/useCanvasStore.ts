@@ -8,14 +8,13 @@
  */
 
 import { create } from 'zustand';
+import { STORAGE_KEYS } from '../constants';
 
 interface CanvasStore {
   width: number;
   height: number;
   setSize: (width: number, height: number) => void;
 }
-
-const STORAGE_KEY = 'canvas-size';
 
 /**
  * Reads canvas size from localStorage and returns it.
@@ -27,7 +26,7 @@ const STORAGE_KEY = 'canvas-size';
  */
 function loadSize(): { width: number; height: number } {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEYS.CANVAS_SIZE);
     if (raw) {
       const parsed = JSON.parse(raw) as unknown;
       if (
@@ -52,7 +51,7 @@ export const useCanvasStore = create<CanvasStore>((set) => ({
   setSize: (width, height) => {
     set({ width, height });
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ width, height }));
+      localStorage.setItem(STORAGE_KEYS.CANVAS_SIZE, JSON.stringify({ width, height }));
     } catch { /* ignore save failures */ }
   },
 }));

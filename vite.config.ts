@@ -20,13 +20,13 @@ export default defineConfig({
         start_url: '.',
         icons: [
           {
-            src: 'pwa-icon.svg',
+            src: 'sidenote.svg',
             sizes: 'any',
             type: 'image/svg+xml',
             purpose: 'any',
           },
           {
-            src: 'pwa-icon.svg',
+            src: 'sidenote.svg',
             sizes: 'any',
             type: 'image/svg+xml',
             purpose: 'maskable',
